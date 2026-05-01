@@ -1,0 +1,13 @@
+.vscode
+.vscode-test
+.trae-cn
+.git
+.gitignore
+.yarnrc
+vsc-extension-quickstart.md
+**/.DS_Store
+**/jsconfig.json
+**/*.map
+**/eslint.config.mjs
+**/.vscode-test.*
+**/*.vsix

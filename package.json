@@ -1,0 +1,206 @@
+{
+  "name": "macintosh-ui",
+  "displayName": "Macintosh UI",
+  "description": "Macintosh UI brings you a unique visual experience!",
+  "author": "Wang Ming",
+  "publisher": "Jake",
+  "icon": "icons/logo.png",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wangmings/macintosh-ui.git"
+  },
+  "engines": {
+    "vscode": "^1.87.0"
+  },
+  "categories": [
+    "Themes",
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./src/extension.js",
+  "contributes": {
+    "messages": {
+      "open": "%prompt.open.theme%",
+      "update": "%prompt.update.theme%",
+      "clean": "%prompt.clean.theme%",
+      "backup": "%prompt.backup.theme%",
+      "import": "%prompt.import.theme%",
+      "script": "%prompt.script.plugin%",
+      "restart": "%prompt.button.restart%",
+      "reload": "%prompt.button.reload%"
+    },
+    "configuration": {
+      "title": "%plugin.name%",
+      "properties": {
+        "setting.ui.fontFamily": {
+          "type": "string",
+          "default": "Symbols Nerd Font Mono, JetBrains Mono, TsangerJinKai02-W04",
+          "description": "%prompt.setting.fonts%"
+        },
+        "default.ui.fontFamily": {
+          "type": "string",
+          "default": "-apple-system",
+          "description": "%prompt.default.fonts%",
+          "enum": [
+            "-apple-system",
+            "SF Pro Text"
+          ]
+        }
+      }
+    },
+    "commands": [
+      {
+        "title": "%menu.open.theme%",
+        "command": "menu.open.theme",
+        "category": "macintosh-ui"
+      },
+      {
+        "title": "%menu.update.theme%",
+        "command": "menu.update.theme",
+        "category": "macintosh-ui"
+      },
+      {
+        "title": "%menu.clean.theme%",
+        "command": "menu.clean.theme",
+        "category": "macintosh-ui"
+      },
+      {
+        "title": "%menu.backup.theme%",
+        "command": "menu.backup.theme",
+        "category": "macintosh-ui"
+      },
+      {
+        "title": "%menu.on.frostedGlass%",
+        "command": "menu.on.frostedGlass",
+        "category": "macintosh-ui"
+      },
+      {
+        "title": "%menu.off.frostedGlass%",
+        "command": "menu.off.frostedGlass",
+        "category": "macintosh-ui"
+      }
+    ],
+    "submenus": [
+      {
+        "id": "submenus-list",
+        "label": "%plugin.name%"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "submenu": "submenus-list",
+          "group": "1_apple@1"
+        }
+      ],
+      "submenus-list": [
+        {
+          "command": "menu.on.frostedGlass",
+          "group": "1_effect@1"
+        },
+        {
+          "command": "menu.off.frostedGlass",
+          "group": "1_effect@2"
+        },
+        {
+          "command": "menu.open.theme",
+          "group": "2_theme@1"
+        },
+        {
+          "command": "menu.update.theme",
+          "group": "2_theme@2"
+        },
+        {
+          "command": "menu.clean.theme",
+          "group": "2_theme@3"
+        },
+        {
+          "command": "menu.backup.theme",
+          "group": "2_theme@4"
+        }
+      ]
+    },
+    "themes": [
+      {
+        "label": "Apple Zed Agola",
+        "uiTheme": "vs-dark",
+        "path": "vscode/theme/dark-agola.json"
+      },
+      {
+        "label": "Apple Deep I",
+        "uiTheme": "vs-dark",
+        "path": "vscode/theme/dark-deep-i.json"
+      },
+      {
+        "label": "Apple Deep II",
+        "uiTheme": "vs-dark",
+        "path": "vscode/theme/dark-deep-ii.json"
+      },
+      {
+        "label": "Apple Deep III",
+        "uiTheme": "vs-dark",
+        "path": "vscode/theme/dark-deep-iii.json"
+      },
+      {
+        "label": "Apple Deep IV",
+        "uiTheme": "vs-dark",
+        "path": "vscode/theme/dark-deep-iv.json"
+      },
+      {
+        "label": "Apple GitHub Dark",
+        "uiTheme": "vs-dark",
+        "path": "vscode/theme/dark-github.json"
+      },
+      {
+        "label": "Apple Material Dark",
+        "uiTheme": "vs-dark",
+        "path": "vscode/theme/dark-material.json"
+      },
+      {
+        "label": "Apple One Dark Pro",
+        "uiTheme": "vs-dark",
+        "path": "vscode/theme/dark-one.json"
+      },
+      {
+        "label": "Apple Zed Andromeda",
+        "uiTheme": "vs-dark",
+        "path": "vscode/theme/dark-zed.json"
+      },
+      {
+        "label": "Apple Boxy Yesterday",
+        "uiTheme": "vs",
+        "path": "vscode/theme/light-boxy.json"
+      },
+      {
+        "label": "Apple Zed Italic",
+        "uiTheme": "vs",
+        "path": "vscode/theme/light-italic.json"
+      },
+      {
+        "label": "Apple Quiet VSC",
+        "uiTheme": "vs",
+        "path": "vscode/theme/light-quiet.json"
+      }
+    ]
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "pnpm run lint",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@types/vscode": "^1.87.0",
+    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.34.0"
+  },
+  "__metadata": {
+    "installedTimestamp": 1759293293258,
+    "size": 2248913
+  }
+}

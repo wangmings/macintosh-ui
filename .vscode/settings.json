@@ -1,0 +1,15 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.DS_Store": true,
+        "**/node_modules": true,
+        "**/.npmrc": true,
+        "**/.pnpm-lock.yaml": true,
+        // "**/jsconfig.json": true,
+        "**/pnpm-lock.yaml": true,
+        // "**/.vscodeignore": true,
+        "**/CHANGELOG.md": true,
+        "**/LICENSE.md": true,
+        // "**/.gitignore": true
+    }
+}

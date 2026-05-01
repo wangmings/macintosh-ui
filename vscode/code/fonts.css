@@ -1,0 +1,101 @@
+/* ======================================
+   1. 完整加载 JetBrains Mono 全套字体 (所有粗细+常规+斜体)
+   字体名修改为：JetBrains Mono （带空格，和你要求一致）
+   共用一个字体名，调用仅需改 font-weight/font-style
+   ====================================== */
+/* 常规字重 常规样式 400 */
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('./font/JetBrainsMono-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+/* 常规字重 斜体样式 400 */
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('./font/JetBrainsMono-Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+/* 中等字重 常规样式 500 */
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('./font/JetBrainsMono-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+/* 中等字重 斜体样式 500 */
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('./font/JetBrainsMono-Medium-Italic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+/* 加粗字重 常规样式 700 */
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('./font/JetBrainsMono-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+/* 加粗字重 斜体样式 700 */
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('./font/JetBrainsMono-Bold-Italic.ttf') format('truetype');
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+}
+/* 特粗字重 常规样式 800 */
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('./font/JetBrainsMono-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+/* 特粗字重 斜体样式 800 */
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('./font/JetBrainsMono-ExtraBold-Italic.ttf') format('truetype');
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ======================================
+   2. 加载 仓劲楷体 
+   字体名修改为：TsangerJinKai02-W04 （和你要求一致，原文件名）
+   ====================================== */
+@font-face {
+  font-family: 'TsangerJinKai02-W04';
+  src: url('./font/TsangerJinKai02-W04.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ======================================
+   3. 加载 NerdFont图标字体
+   字体名修改为：Symbols Nerd Font Mono （带空格，和你要求一致）
+   ====================================== */
+@font-face {
+  font-family: 'Symbols Nerd Font Mono';
+  src: url('./font/SymbolsNerdFontMono-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+/* 全局默认字体（推荐！直接复制） */
+* {
+  font-family: 'Symbols Nerd Font Mono', 'JetBrains Mono', 'TsangerJinKai02-W04', sans-serif;
+}
+
+
