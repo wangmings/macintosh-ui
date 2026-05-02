@@ -61,4 +61,24 @@ async function updateThemeConfig(themesDir, pkgFile) {
 
 
 
+
+// 测试更新主题配置
+async function test() {
+  const baseDir = path.join(__dirname, '..')
+  const themesDir = path.join(baseDir, 'theme')
+  const pkgFile = path.join(path.dirname(baseDir), 'package.json')
+ 
+  console.log('===== 测试更新主题配置 =====')
+  const themes = await updateThemeConfig(themesDir, pkgFile)
+  console.log(themes)
+  
+}
+
+
+
+
+
+// 测试更新主题配置
+if (require.main === module) test()
+
 module.exports = { updateThemeConfig }
