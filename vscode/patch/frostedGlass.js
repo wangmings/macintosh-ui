@@ -94,7 +94,7 @@ const vscodeConfig = {
 
 
 
-
+const { replaceMatch } = require('./utils')
 
 
 /**
@@ -103,12 +103,23 @@ const vscodeConfig = {
  * @returns {string} - 修改后的文本
  */
 function setFrostedGlass(text) {
-  const fg = vscodeConfig.frostedGlass
-  const bg = fg.backgroundColor
-  const match = 'experimentalDarkMode:!0'
+  const glass = vscodeConfig.frostedGlass
+  const bgColor = glass.backgroundColor
+  const glassOptions = JSON.stringify(glass).slice(1, -1)
+  
+  text = replaceMatch(text, {
+    desc: '设置窗口玻璃效果',
+    search: 'experimentalDarkMode:!0',
+    replace: `experimentalDarkMode:!0,${glassOptions}`
+  })
+
+  text = replaceMatch(text, {
+    desc: '设置窗口玻璃效果,替换背景颜色',
+    search: /setBackgroundColor\([\w.]+\);/g,
+    replace: `setBackgroundColor("${bgColor}");`
+  })
+  
   return text
-    .replaceAll(match, `${match},${JSON.stringify(fg).slice(1, -1)}`)
-    .replace(/setBackgroundColor\([\w.]+\);/g, `setBackgroundColor("${bg}");`)
 }
 
 

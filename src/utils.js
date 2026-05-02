@@ -95,15 +95,16 @@ async function packageJSON(packFile) {
 
 /**
  * 获取 VS Code 字体族
- * @returns {{baseFont: string, setFont: string}} 字体族字符串对象或对象
+ * @returns {{defaultFont: string, settingFont: string}} 字体族字符串对象或对象
  */
 function getVScodeFont() {
-  const uiFont = getVScodeConfig('setting.ui.fontFamily')
-  const baseFont = getVScodeConfig('default.ui.fontFamily')
-  // 检查字体配置是否为空
-  if (!uiFont || !baseFont) return {baseFont: '', setFont: ''}
-  const setFont = `${uiFont},${baseFont}`
-  return {baseFont, setFont}
+  const defaultFont = getVScodeConfig('default.ui.fontFamily')
+  const settingFont = getVScodeConfig('setting.ui.fontFamily')
+
+  const fonts = (!defaultFont || !settingFont) 
+    ? {defaultFont: '', settingFont: ''} 
+    : {defaultFont, settingFont: `${settingFont}, ${defaultFont}`}
+  return fonts
 }
 
 

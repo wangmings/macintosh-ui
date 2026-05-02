@@ -143,7 +143,7 @@ function openThemeFolder() {
  */
 async function applyActivityBar(isAdd) {
   const {dir, files} = plugin.vscode.desktop
-  const fonts = getVScodeFont()
+  const {defaultFont, settingFont} = getVScodeFont()
   const isTrae = dir.includes('Trae')
   for (const file of files) {
     const ext = path.extname(file)
@@ -157,7 +157,8 @@ async function applyActivityBar(isAdd) {
           console.error(`[TraeCN]: 活动栏补丁添加失败! ${err.message}`)
         }
       }
-      return text.replaceAll(fonts.baseFont, fonts.setFont)
+      if (settingFont.length > 0) text = text.replaceAll(defaultFont, settingFont)
+      return text
     })
   }
 
@@ -206,12 +207,7 @@ async function applyThemeConfig(isAdd) {
     await copyFolder(codeDir, injectDir)
     // 复制字体文件到应用目录
     await copyFolder(fontDir, injectFontDir)
-    // 复制代码文件到应用目录
-    // for (const file of codeFiles) {
-    //   const source = path.join(codeDir, file)
-    //   const target = path.join(injectDir, file)
-    //   await copyFile(source, target)
-    // }
+
   } else {
     // 清理应用目录
     await deleteFolder(injectDir)
