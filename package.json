@@ -22,28 +22,18 @@
   ],
   "main": "./src/extension.js",
   "contributes": {
-    "messages": {
-      "open": "%prompt.open.theme%",
-      "update": "%prompt.update.theme%",
-      "clean": "%prompt.clean.theme%",
-      "backup": "%prompt.backup.theme%",
-      "import": "%prompt.import.theme%",
-      "script": "%prompt.script.plugin%",
-      "restart": "%prompt.button.restart%",
-      "reload": "%prompt.button.reload%"
-    },
     "configuration": {
       "title": "%plugin.name%",
       "properties": {
         "setting.ui.fontFamily": {
           "type": "string",
           "default": "Symbols Nerd Font Mono, JetBrains Mono, TsangerJinKai02-W04",
-          "description": "%prompt.setting.fonts%"
+          "description": "%desc.fonts.setting%"
         },
         "default.ui.fontFamily": {
           "type": "string",
           "default": "-apple-system",
-          "description": "%prompt.default.fonts%",
+          "description": "%desc.fonts.default%",
           "enum": [
             "-apple-system",
             "SF Pro Text"
@@ -73,13 +63,13 @@
         "category": "macintosh-ui"
       },
       {
-        "title": "%menu.on.frostedGlass%",
-        "command": "menu.on.frostedGlass",
+        "title": "%menu.glass.enable%",
+        "command": "menu.glass.enable",
         "category": "macintosh-ui"
       },
       {
-        "title": "%menu.off.frostedGlass%",
-        "command": "menu.off.frostedGlass",
+        "title": "%menu.glass.disable%",
+        "command": "menu.glass.disable",
         "category": "macintosh-ui"
       }
     ],
@@ -98,11 +88,11 @@
       ],
       "submenus-list": [
         {
-          "command": "menu.on.frostedGlass",
+          "command": "menu.glass.enable",
           "group": "1_effect@1"
         },
         {
-          "command": "menu.off.frostedGlass",
+          "command": "menu.glass.disable",
           "group": "1_effect@2"
         },
         {

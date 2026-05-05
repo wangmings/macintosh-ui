@@ -1,40 +1,13 @@
-
-const fs = require('fs')
 const path = require('path')
-const theme = require('./theme')
-const utils = require('./utils.js')
-const activityBar = require('../vscode/patch/activityBar')
-const frostedGlass = require('../vscode/patch/frostedGlass')
-
-const { existsSync } = fs
-const { updateThemeConfig } = theme
-const { traeActivityBar } = activityBar
-const { vscodeConfig, setFrostedGlass } = frostedGlass
-const {
-  homeDir,
-  appRoot,
-  vscodeExecCmd,
-  registerCmd,
-  packageJSON,
-  addWorkspace,
-  copyFolder,
-  deleteFolder,
-  getFolderItems,
-  getVScodeFont,
-  setVScodeConfig,
-  vscodeRestartApp,
-  vscodeShowMessage,
-  fileReadWriteBackup,
-} = utils
-
-
-
+const msg = require('./message')
+const utils = require('./utils')
+const patch = require('../vscode/patch/main')
 
 
 
 // 插件配置对象
 const plugin = {
-  messages: {},
+  message: {},
   vscode: {
     main: '$app/out/main.js',
     workbench: {
@@ -50,7 +23,7 @@ const plugin = {
   execFile: '$app/bin/code',
   packFile: '$ext/package.json',
   backupDir: '$home/Macintosh-UI-Backup',
-  
+
 
   vscodeDir: '$ext/vscode',
   codeDir: '$ext/vscode/code',
@@ -60,9 +33,6 @@ const plugin = {
   injectFontDir: '$workbench/vscode/font',
 
 }
-
-
-
 
 
 
@@ -80,13 +50,15 @@ async function initPlugin(ctx) {
   const parsePath = (paths) => {
     return path.normalize(paths
       .replaceAll('$ext', extRoot)
-      .replaceAll('$app', appRoot)
-      .replaceAll('$home', homeDir)
+      .replaceAll('$app', utils.appRoot)
+      .replaceAll('$home', utils.homeDir)
       .replaceAll('$workbench', workbenchDir)
     )
   }
 
 
+  // 初始化消息
+  plugin.message = msg.getMessages()
 
   // 解析 VS Code 核心路径
   plugin.vscode.main = parsePath(plugin.vscode.main)
@@ -99,8 +71,6 @@ async function initPlugin(ctx) {
   plugin.packFile = parsePath(plugin.packFile)
   plugin.backupDir = parsePath(plugin.backupDir)
 
-  const messages = await packageJSON(plugin.packFile)
-  plugin.messages = messages?.contributes?.messages || {}
 
   // 初始化插件基础目录
   plugin.vscodeDir = parsePath(plugin.vscodeDir)
@@ -122,14 +92,14 @@ async function initPlugin(ctx) {
 // 打开主题配置目录
 function openThemeFolder() {
   const folder = plugin.vscodeDir
-  addWorkspace(folder, (status) => {
-    const msg = {
-      error: `无效路径: ${folder}`,
-      exist: `已在工作区: ${folder}`,
-      success: `已添加到工作区: ${folder}`,
-    }
-    vscodeShowMessage(msg[status])
-  })
+  const status = utils.addWorkspace(folder)
+  const message = {
+    fail: plugin.message.open.fail,
+    exist: plugin.message.open.exist,
+    success: plugin.message.open.success,
+  }
+  utils.showMessage(message[status]?.replace('%path%', folder))
+
 }
 
 
@@ -142,19 +112,19 @@ function openThemeFolder() {
  * @returns {Promise<void>}
  */
 async function applyActivityBar(isAdd) {
-  const {dir, files} = plugin.vscode.desktop
-  const {defaultFont, settingFont} = getVScodeFont()
+  const { dir, files } = plugin.vscode.desktop
+  const { defaultFont, settingFont } = utils.getVScodeFonts()
   const isTrae = dir.includes('Trae')
   for (const file of files) {
     const ext = path.extname(file)
     const filePath = path.join(dir, file)
-    await fileReadWriteBackup(isAdd, filePath, (text) => {
+    await utils.readWriteBackupFile(isAdd, filePath, (text) => {
       if (isTrae) {
-        try{
-          text = traeActivityBar(ext, text)  
-        }catch(err){
-          vscodeShowMessage('[TraeCN]: 活动栏补丁添加失败! 当前版本不支持！ 请更新补丁代码!')
-          console.error(`[TraeCN]: 活动栏补丁添加失败! ${err.message}`)
+        try {
+          text = patch.traeActivityBar(ext, text)
+        } catch (err) {
+          utils.showMessage(plugin.message.patch.bar)
+          console.error(err.message)
         }
       }
       if (settingFont.length > 0) text = text.replaceAll(defaultFont, settingFont)
@@ -170,20 +140,33 @@ async function applyActivityBar(isAdd) {
 
 
 
-// 应用主题配置
+/**
+ * 应用主题配置
+ * @param {boolean} isAdd - 是否添加主题配置
+ * @returns {Promise<void>}
+ */
 async function applyThemeConfig(isAdd) {
+
   // 从插件配置中获取必要路径
-  const {vscode, packFile, codeDir, fontDir, themeDir, injectDir, injectFontDir} = plugin
+  const { vscode, packFile, codeDir, fontDir, themeDir, injectDir, injectFontDir } = plugin
 
   // 应用活动栏补丁
   await applyActivityBar(isAdd)
 
-  // 获取所有代码文件
-  let codeFiles = await getFolderItems(codeDir, 'file')
+  // 应用玻璃效果补丁
+  await utils.readWriteBackupFile(isAdd, vscode.main, (text) => {
+    try {
+      return patch.frostedGlass(text)
+    } catch (err) {
+      utils.showMessage(plugin.message.patch.glass)
+      console.error(err.message)
+    }
+  })
 
-  // 将配置添加到应用中的HTML文件
-  await fileReadWriteBackup(isAdd, vscode.workbench.html, (text) => {
-    const tags = codeFiles.map(file => {
+  // 应用注入的代码文件
+  await utils.readWriteBackupFile(isAdd, vscode.workbench.html, async (text) => {
+    let files = await utils.getFolderItems(codeDir, 'file')
+    const tags = files.map(file => {
       const ext = path.extname(file)
       return {
         '.js': `<script async src=./vscode/${file}></script>`,
@@ -194,31 +177,28 @@ async function applyThemeConfig(isAdd) {
     return text.replaceAll('</head>', injected)
   })
 
-  // 应用玻璃效果
-  await fileReadWriteBackup(isAdd, vscode.main, (text) => { 
-    return setFrostedGlass(text)
-  })
-
+  
 
   if (isAdd) {
     // 更新主题配置
-    await updateThemeConfig(themeDir, packFile)
+    await patch.updateThemeConfig(themeDir, packFile)
     // 复制代码文件到应用目录
-    await copyFolder(codeDir, injectDir)
+    await utils.copyFolder(codeDir, injectDir)
     // 复制字体文件到应用目录
-    await copyFolder(fontDir, injectFontDir)
+    await utils.copyFolder(fontDir, injectFontDir)
 
   } else {
     // 清理应用目录
-    await deleteFolder(injectDir)
+    await utils.deleteFolder(injectDir)
   }
 
   // 提示用户重启应用或重新加载窗口
-  const {update, clean, reload, restart} = plugin.messages
+  const { update, clean } = plugin.message.theme
+  const { reload, restart } = plugin.message.button
   const message = isAdd ? update : clean
-  vscodeShowMessage(message, reload, restart).then(opt => {
-    if (opt === restart) vscodeRestartApp(plugin.execFile)
-    else if (opt === reload) vscodeExecCmd('workbench.action.reloadWindow')
+  utils.showMessage(message, reload, restart).then(opt => {
+    if (opt === restart) utils.restartVScodeApp(plugin.execFile)
+    else if (opt === reload) utils.execCommand('workbench.action.reloadWindow')
   })
 
 }
@@ -232,8 +212,8 @@ async function applyThemeConfig(isAdd) {
  * 创建主题备份
  */
 async function createThemeBackup() {
-  await copyFolder(plugin.vscodeDir, plugin.backupDir)
-  vscodeShowMessage(plugin.messages.backup.replace('%path%', plugin.backupDir))
+  await utils.copyFolder(plugin.vscodeDir, plugin.backupDir)
+  utils.showMessage(plugin.message.theme.backup.replace('%path%', plugin.backupDir))
 }
 
 
@@ -245,9 +225,11 @@ async function createThemeBackup() {
  * @param {boolean} enabled - 是否启用玻璃效果 
  */
 function applyFrostedGlass(enabled) {
-  const config = enabled ? vscodeConfig["workbench.colorCustomizations"] : {}
-  setVScodeConfig('workbench.colorCustomizations', config)
+  const config = enabled ? patch.windowBlur.workbenchCustomColors : {}
+  utils.setVScodeConfig('workbench.colorCustomizations', config)
 }
+
+
 
 
 
@@ -256,31 +238,28 @@ function applyFrostedGlass(enabled) {
  * @param {*} ctx 扩展上下文
  */
 async function activate(ctx) {
-  try {
-    
-    // 初始化插件路径
-    await initPlugin(ctx)
 
-    // 检查注入目录是否存在
-    if (!existsSync(plugin.injectDir)) {
-      vscodeShowMessage(plugin.messages.script, 'YES', 'NO').then(opt => {
-        if (opt === 'YES') applyThemeConfig(true)
-      })
-    }
+  // 初始化插件路径
+  await initPlugin(ctx)
+  console.log('插件已激活', plugin)
 
-    // 注册所有菜单命令
-    registerCmd(ctx, {
-      'menu.open.theme': () => openThemeFolder(),
-      'menu.update.theme': () => applyThemeConfig(true),
-      'menu.clean.theme': () => applyThemeConfig(false),
-      'menu.backup.theme': () => createThemeBackup(),
-      'menu.on.frostedGlass': () => applyFrostedGlass(true),
-      'menu.off.frostedGlass': () => applyFrostedGlass(false)
+  // 检查注入目录是否存在
+  if (!await utils.exists(plugin.injectDir)) {
+    utils.showMessage(plugin.message.script, 'YES', 'NO').then(opt => {
+      if (opt === 'YES') applyThemeConfig(true)
     })
-
-  } catch (err) {
-    console.error('[MACINTOSH-UI]: ', err)
   }
+
+  // 注册所有菜单命令
+  utils.registerCmd(ctx, {
+    'menu.open.theme': () => openThemeFolder(),
+    'menu.update.theme': () => applyThemeConfig(true),
+    'menu.clean.theme': () => applyThemeConfig(false),
+    'menu.backup.theme': () => createThemeBackup(),
+    'menu.glass.enable': () => applyFrostedGlass(true),
+    'menu.glass.disable': () => applyFrostedGlass(false)
+  })
+
 }
 
 

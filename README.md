@@ -89,12 +89,12 @@
 macintosh-ui/
 ├── src/
 │   ├── extension.js        # 扩展入口，注册命令与执行注入流程
-│   ├── theme.js            # 扫描主题目录并同步 package.json
+│   ├── message.js          # 运行时提示文案与语言切换
 │   └── utils.js            # 文件读写、备份、重启、配置读写等工具
 ├── vscode/
 │   ├── code/               # 注入到工作台的 JS/CSS
 │   ├── font/               # 注入使用的字体资源
-│   ├── patch/              # 宿主环境补丁
+│   ├── patch/              # 宿主环境补丁与主题同步逻辑
 │   ├── theme/              # 主题 JSON
 │   └── docs/               # 主题配置相关文档
 ├── icons/
@@ -121,7 +121,7 @@ pnpm run test
 
 ### 主题开发
 
-主题文件位于 [`vscode/theme`](./vscode/theme)。执行 `更新主题配置` 时，扩展会扫描这个目录下的 `.json` 文件，并自动刷新 `package.json` 中的 `contributes.themes`。
+主题文件位于 [`vscode/theme`](./vscode/theme)。执行 `更新主题配置` 时，扩展会通过 [`vscode/patch/themes.js`](./vscode/patch/themes.js) 扫描这个目录下的 `.json` 文件，并自动刷新 `package.json` 中的 `contributes.themes`。
 
 如果你要调整语法高亮作用域，可以参考：
 

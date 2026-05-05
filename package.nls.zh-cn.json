@@ -5,16 +5,8 @@
     "menu.clean.theme": "清除主题配置",
     "menu.backup.theme": "备份主题配置",
     "menu.import.theme": "导入主题配置",
-    "menu.on.frostedGlass": "启用磨砂玻璃",
-    "menu.off.frostedGlass": "关闭磨砂玻璃",
-    "prompt.button.reload": "重新加载",
-    "prompt.button.restart": "立即重启",
-    "prompt.script.plugin": "麦金塔界面：脚本未注入，是否注入脚本？",
-    "prompt.update.theme": "已更新主题配置，是否重启以生效？",
-    "prompt.clean.theme": "已清除配置，是否重启清理缓存？",
-    "prompt.backup.theme": "已备份配置：%path%",
-    "prompt.import.theme": "已导入主题配置",
-    "prompt.open.theme": "已打开主题配置",
-    "prompt.setting.fonts": "设置编辑器字体",
-    "prompt.default.fonts": "默认编辑器字体"
+    "menu.glass.enable": "启用磨砂玻璃",
+    "menu.glass.disable": "关闭磨砂玻璃",
+    "desc.fonts.setting": "设置编辑器字体",
+    "desc.fonts.default": "默认编辑器字体"
 }

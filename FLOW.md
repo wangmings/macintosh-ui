@@ -18,8 +18,8 @@ flowchart TD
     H --> I2[update theme]
     H --> I3[clean theme]
     H --> I4[backup theme]
-    H --> I5[on frostedGlass]
-    H --> I6[off frostedGlass]
+    H --> I5[glass enable]
+    H --> I6[glass disable]
 
     I1 --> J1[openThemeFolder]
     I2 --> K[applyThemeConfig true]
@@ -75,8 +75,8 @@ flowchart TD
     subgraph R[HTML/JS注入]
         R1[读取 code 资源]
         R2[向 workbench.html 注入 script 和 link 标签]
-        R3[setFrostedGlass]
-        R4[向 main.js 附加 frostedGlass 参数]
+        R3[frostedGlass patch]
+        R4[向 main.js 注入 frostedGlass 参数]
         R5[替换透明背景]
     end
 
@@ -107,17 +107,18 @@ flowchart TD
 ## 模块关系
 
 - `src/extension.js`：扩展入口，负责初始化、注册命令、执行注入/清理/备份流程。
+- `src/message.js`：运行时提示文案与语言切换逻辑。
 - `src/utils.js`：提供文件备份恢复、目录复制、配置读写、工作区添加、应用重启等通用能力。
-- `src/theme.js`：扫描 `vscode/theme/*.json`，动态刷新 `package.json` 里的主题列表。
 - `vscode/code/`：真正注入到宿主工作台里的 CSS/JS。
 - `vscode/font/`：注入后的字体资源目录。
-- `vscode/patch/activityBar.js`：Trae CN 宿主的活动栏补丁。
-- `vscode/patch/frostedGlass.js`：毛玻璃配置和宿主 `main.js` 补丁逻辑。
+- `vscode/patch/config.js`：活动栏补丁配置与毛玻璃配置。
+- `vscode/patch/main.js`：补丁执行入口，负责活动栏与毛玻璃文本替换。
+- `vscode/patch/themes.js`：扫描 `vscode/theme/*.json`，动态刷新 `package.json` 里的主题列表。
 
 ## 关键实现特点
 
 - 扩展不只是“切换主题”，还会直接修改宿主安装目录下的工作台文件。
 - 每次写入前会先生成 `.bak` 备份，清理时再从备份恢复。
-- 主题列表不是纯静态配置，而是由 `vscode/theme` 目录扫描后同步到 `package.json`。
-- 菜单里的 `on/off frostedGlass` 只修改 VS Code 配色配置；宿主 `main.js` 的毛玻璃参数注入发生在 `applyThemeConfig` 阶段。
+- 主题列表不是纯静态配置，而是由 `vscode/theme` 目录扫描后通过 `vscode/patch/themes.js` 同步到 `package.json`。
+- 菜单里的 `glass enable/disable` 只修改 VS Code 配色配置；宿主 `main.js` 的毛玻璃参数注入发生在 `applyThemeConfig` 阶段。
 - 注入时会复制 `vscode/code` 和 `vscode/font`；清理时当前实现只删除 `injectDir`，不会额外删除 `injectFontDir`。
