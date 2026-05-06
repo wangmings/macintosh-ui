@@ -36,6 +36,8 @@ const plugin = {
 
 
 
+
+
 /**
  * 初始化插件所有路径与目录结构（异步 ✅）
  * @param {*} ctx 扩展上下文
@@ -45,29 +47,31 @@ async function initPlugin(ctx) {
   const extRoot = ctx.extensionPath
   const appRoot = utils.appRoot
   const homeDir = utils.homeDir
+  const { app, ext } = plugin
 
   // 初始化消息
   plugin.message = utils.getMessages()
-
-  // 拼接 VS Code 应用路径
-  plugin.app.exec = path.join(appRoot, plugin.app.exec)
-  plugin.app.main = path.join(appRoot, plugin.app.main)
-  plugin.app.workbench.dir = path.join(appRoot, plugin.app.workbench.dir)
-  plugin.app.desktop.dir = path.join(appRoot, plugin.app.desktop.dir)
-
-  // 拼接工作台文件与注入路径
-  const workbenchDir = plugin.app.workbench.dir
-  plugin.app.workbench.file = path.join(workbenchDir, plugin.app.workbench.file)
-  plugin.app.workbench.inject = path.join(workbenchDir, plugin.app.workbench.inject)
-
-  // 拼接扩展内部路径
-  plugin.ext.vscode = path.join(extRoot, plugin.ext.vscode)
-  plugin.ext.core = path.join(extRoot, plugin.ext.core)
-  plugin.ext.theme = path.join(extRoot, plugin.ext.theme)
-  plugin.ext.package = path.join(extRoot, plugin.ext.package)
-
   // 拼接备份路径
   plugin.backup = path.join(homeDir, plugin.backup)
+
+  // 拼接 VS Code 应用路径
+  app.exec = path.join(appRoot, app.exec)
+  app.main = path.join(appRoot, app.main)
+  app.workbench.dir = path.join(appRoot, app.workbench.dir)
+  app.desktop.dir = path.join(appRoot, app.desktop.dir)
+
+  // 拼接工作台文件与注入路径
+  const workbenchDir = app.workbench.dir
+  app.workbench.file = path.join(workbenchDir, app.workbench.file)
+  app.workbench.inject = path.join(workbenchDir, app.workbench.inject)
+
+  // 拼接扩展内部路径
+  ext.vscode = path.join(extRoot, ext.vscode)
+  ext.core = path.join(extRoot, ext.core)
+  ext.theme = path.join(extRoot, ext.theme)
+  ext.package = path.join(extRoot, ext.package)
+
+  
 }
 
 
@@ -172,7 +176,6 @@ async function applyThemeConfig(isAdd) {
     await theme.updateThemeConfig(ext.theme, ext.package)
     // 复制代码文件到应用目录
     await utils.copyFolder(ext.core, app.workbench.inject)
-
   } else {
     // 清理应用目录
     await utils.deleteFolder(app.workbench.inject)
