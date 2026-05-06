@@ -1,4 +1,3 @@
-const { updateThemeConfig } = require('./themes.js')
 const { windowBlur, activityBar } = require('./config.js')
 
 
@@ -94,6 +93,5 @@ function frostedGlass(text) {
 module.exports = {
   windowBlur,
   traeActivityBar,
-  frostedGlass,
-  updateThemeConfig
+  frostedGlass
 }

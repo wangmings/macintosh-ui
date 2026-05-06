@@ -87,19 +87,23 @@
 
 ```text
 macintosh-ui/
-├── src/
+├── README.md               # 项目说明文档
+├── package.json            # 扩展清单、命令注册、主题注册入口
+├── src/                    # 扩展运行逻辑
 │   ├── extension.js        # 扩展入口，注册命令与执行注入流程
-│   ├── message.js          # 运行时提示文案与语言切换
 │   └── utils.js            # 文件读写、备份、重启、配置读写等工具
-├── vscode/
-│   ├── code/               # 注入到工作台的 JS/CSS
-│   ├── font/               # 注入使用的字体资源
-│   ├── patch/              # 宿主环境补丁与主题同步逻辑
-│   ├── theme/              # 主题 JSON
-│   └── docs/               # 主题配置相关文档
-├── icons/
-├── package.json
-└── README.md
+├── vscode/                 # 注入资源与主题系统
+│   ├── core/               # 核心运行时资源：UI 注入、样式覆盖、字体配置
+│   ├── patch/              # 源码补丁模块：窗口效果、活动栏逻辑等
+│   ├── theme/              # 主题系统：主题数据、生成脚本、开发文档
+│   └── README.md           # vscode 子目录说明文档
+├── icons/                  # 扩展图标资源目录
+├── package.nls.json        # 默认语言文案
+├── package.nls.zh-cn.json  # 中文文案
+├── CHANGELOG.md            # 更新记录
+├── FLOW.md                 # 项目流程/设计补充说明
+├── LICENSE.md              # 许可证
+└── jsconfig.json           # JS 项目配置
 ```
 
 ## 开发说明
@@ -121,12 +125,13 @@ pnpm run test
 
 ### 主题开发
 
-主题文件位于 [`vscode/theme`](./vscode/theme)。执行 `更新主题配置` 时，扩展会通过 [`vscode/patch/themes.js`](./vscode/patch/themes.js) 扫描这个目录下的 `.json` 文件，并自动刷新 `package.json` 中的 `contributes.themes`。
+主题文件位于 [`vscode/theme`](./vscode/theme)。执行 `更新主题配置` 时，扩展会通过 [`vscode/theme/main.js`](./vscode/theme/main.js) 扫描这个目录下的 `.json` 文件，并自动刷新 `package.json` 中的 `contributes.themes`。
 
 如果你要调整语法高亮作用域，可以参考：
 
-- [vscode/docs/README.md](./vscode/docs/README.md)
-- [vscode/docs/VSCode主题配置说明.md](./vscode/docs/VSCode主题配置说明.md)
+- [`vscode/README.md`](./vscode/README.md)
+- [`vscode/theme/docs/scope.md`](./vscode/theme/docs/scope.md)
+- [`vscode/theme/docs/theme.md`](./vscode/theme/docs/theme.md)
 
 ## 兼容性
 

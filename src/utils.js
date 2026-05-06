@@ -21,9 +21,9 @@ const showMessage = vscode.window.showInformationMessage
  * @returns {Promise<boolean>} 路径是否存在
  */
 async function exists(path) {
-  try { 
+  try {
     await fs.access(path, fs.constants.F_OK)
-    return true 
+    return true
   } catch (err) { return false }
 }
 
@@ -67,7 +67,7 @@ function registerCmd(ctx, command) {
   if (typeof command !== 'object') throw new TypeError('command: must be an object')
   const keys = Object.keys(command)
   for (const key of keys) {
-    const callback = command[key]  
+    const callback = command[key]
     ctx.subscriptions.push(vscode.commands.registerCommand(key, callback))
   }
 }
@@ -98,14 +98,14 @@ async function packageJSON(packFile) {
 
 /**
  * 获取 VS Code 字体族
- * @returns {{defaultFont: string, settingFont: string}} 字体族字符串对象或对象
+ * @returns {{default: string, setting: string}} 字体族字符串对象或对象
  */
 function getVScodeFonts() {
   const defaultFont = getVScodeConfig('default.ui.fontFamily')
   const settingFont = getVScodeConfig('setting.ui.fontFamily')
   return (!defaultFont || !settingFont)
-    ? { defaultFont: '', settingFont: '' }
-    : { defaultFont, settingFont: `${settingFont}, ${defaultFont}` }
+    ? { default: '', setting: '' }
+    : { default: defaultFont, setting: `${settingFont}, ${defaultFont}` }
 }
 
 
@@ -232,7 +232,7 @@ async function readWriteBackupFile(isBackup, targetFile, callback) {
   if (isBackup) {
     if (!hasBak) await fs.copyFile(targetFile, bakFile)
     const content = await callback(await fs.readFile(bakFile, 'utf8'))
-    if (typeof content === 'string' && content.trim().length > 0){
+    if (typeof content === 'string' && content.trim().length > 0) {
       await fs.writeFile(targetFile, content, 'utf8')
     }
   } else if (hasBak) {
@@ -247,12 +247,87 @@ async function readWriteBackupFile(isBackup, targetFile, callback) {
 
 
 
+// 获取当前语言的消息
+function getMessages() {
+  const messages = {
+    // 英文
+    en_us: {
+      open: {
+        fail: 'Failed to add to workspace: %path%',
+        exist: 'Already in workspace: %path%',
+        success: 'Added to workspace: %path%'
+      },
+      patch: {
+        bar: '[TraeCN]: Failed to apply activity bar patch. Please update the patch code for this version.',
+        glass: 'Failed to apply frosted glass patch. Please update the patch code for this version.'
+      },
+      theme: {
+        update: 'Theme settings updated. Restart to apply changes?',
+        clean: 'Settings cleared. Restart to clear cache?',
+        backup: 'Settings backed up to: %path%',
+        import: 'Theme settings imported successfully'
+      },
+      button: {
+        theme:{
+          restart: 'Restart Now',
+          reload: 'Reload'
+        },
+        inject:{
+          confirm: 'Yes',
+          cancel: 'No'
+        }
+      },
+      inject: 'Macintosh UI: Script not injected. Inject now?'
+    },
+
+
+    // 中文
+    zh_cn: {
+      open: {
+        fail: '添加到工作区失败：%path%',
+        exist: '已在工作区：%path%',
+        success: '已添加到工作区：%path%'
+      },
+      patch: {
+        bar: '[TraeCN]: 活动栏添加补丁失败！当前版本不支持，请更新补丁代码。',
+        glass: '应用玻璃效果补丁失败！当前版本不支持，请更新补丁代码。'
+      },
+      theme: {
+        update: '已更新主题配置，是否重启以生效？',
+        clean: '已清除配置，是否重启清理缓存？',
+        backup: '已备份配置：%path%',
+        import: '已导入主题配置'
+      },
+      button: {
+        theme:{
+          restart: '立即重启',
+          reload: '重新加载'
+        },
+        inject:{
+          confirm: '确认',
+          cancel: '取消'
+        }
+      },
+      inject: '麦金塔界面：脚本未注入，是否注入脚本？'
+    }
+  }
+  const locale = vscode.env.language.toLowerCase()
+  return locale.startsWith('zh') ? messages.zh_cn : messages.en_us
+}
+
+
+
+
+
+
+
 
 
 module.exports = {
   homeDir,
   appRoot,
   exists,
+  getMessages,
   showMessage,
   execCommand,
   registerCmd,
