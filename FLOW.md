@@ -6,13 +6,13 @@
 flowchart TD
     A[VS Code 启动扩展] --> B[activate ctx]
     B --> C[initPlugin]
-    C --> D{injectDir 已存在?}
+    C --> D{宿主工作台 injectDir 已存在?}
 
     D -- 否 --> E[弹窗询问注入]
     D -- 是 --> H[注册右键菜单]
     E --> H
-    E -- YES --> F[applyThemeConfig true]
-    E -- NO --> G[等待手动命令]
+    E -- 确认 --> F[applyThemeConfig true]
+    E -- 取消 --> G[等待手动命令]
 
     H --> I1[open theme]
     H --> I2[update theme]
@@ -119,4 +119,5 @@ flowchart TD
 - 每次写入前会先生成 `.bak` 备份，清理时再从备份恢复。
 - 主题列表不是纯静态配置，而是由 `vscode/theme/json` 目录扫描后通过 `vscode/theme/main.js` 同步到 `package.json`。
 - 菜单里的 `glass enable/disable` 只修改 VS Code 配色配置；宿主 `main.js` 的毛玻璃参数注入发生在 `applyThemeConfig` 阶段。
+- 当前 `glass enable/disable` 的实现会直接写入 `workbench.colorCustomizations`，不会合并已有的用户自定义颜色配置。
 - 注入时会复制整个 `vscode/core` 到宿主工作台的 `injectDir`；清理时会直接删除该注入目录。

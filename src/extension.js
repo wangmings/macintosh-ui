@@ -7,6 +7,7 @@ const theme = require('../vscode/theme/main')
 
 // 插件配置对象
 const plugin = {
+  init: false,
   message: {},
   backup: 'Macintosh-UI-Backup',
 
@@ -43,6 +44,9 @@ const plugin = {
  * @param {*} ctx 扩展上下文
  */
 async function initPlugin(ctx) {
+  // 初始化插件
+  if (plugin.init) return
+  
   // 获取运行时基础路径
   const extRoot = ctx.extensionPath
   const appRoot = utils.appRoot
@@ -60,18 +64,14 @@ async function initPlugin(ctx) {
   app.workbench.dir = path.join(appRoot, app.workbench.dir)
   app.desktop.dir = path.join(appRoot, app.desktop.dir)
 
-  // 拼接工作台文件与注入路径
-  const workbenchDir = app.workbench.dir
-  app.workbench.file = path.join(workbenchDir, app.workbench.file)
-  app.workbench.inject = path.join(workbenchDir, app.workbench.inject)
-
   // 拼接扩展内部路径
   ext.vscode = path.join(extRoot, ext.vscode)
   ext.core = path.join(extRoot, ext.core)
   ext.theme = path.join(extRoot, ext.theme)
   ext.package = path.join(extRoot, ext.package)
 
-  
+  // 初始化插件状态
+  plugin.init = true
 }
 
 
@@ -82,12 +82,7 @@ async function initPlugin(ctx) {
 function openThemeFolder() {
   const folder = plugin.ext.vscode
   const status = utils.addWorkspace(folder)
-  const message = {
-    fail: plugin.message.open.fail,
-    exist: plugin.message.open.exist,
-    success: plugin.message.open.success,
-  }
-  utils.showMessage(message[status]?.replace('%path%', folder))
+  utils.showMessage(plugin.message.open[status]?.replace('%path%', folder))
 
 }
 
@@ -151,19 +146,21 @@ async function addPatchVSCode(isAdd) {
 async function applyThemeConfig(isAdd) {
   // 从插件配置中获取必要路径
   const { app, ext } = plugin
+  const injectDir = path.join(app.workbench.dir, app.workbench.inject)
+  const workbenchHtml = path.join(app.workbench.dir, app.workbench.file)
 
   // 为VSCode添加补丁
   await addPatchVSCode(isAdd)
 
   // 应用注入的代码文件
-  await utils.readWriteBackupFile(isAdd, app.workbench.file, async (text) => {
-    let files = await utils.getFolderItems(ext.core, 'file')
+  await utils.readWriteBackupFile(isAdd, workbenchHtml, async (text) => {
+    const files = await utils.getFolderItems(ext.core, 'file')
     const tags = files.map(file => {
-      const ext = path.extname(file)
+      const url = `./${app.workbench.inject}/${file}`
       return {
-        '.js': `<script async src=./vscode/${file}></script>`,
-        '.css': `<link async rel="stylesheet" href=./vscode/${file}>`
-      }[ext] || ''
+        '.js': `<script async src=${url}></script>`,
+        '.css': `<link async rel="stylesheet" href=${url}>`
+      }[path.extname(file)] || ''
     })
     const injected = ['', '<!-- Injected by Macintosh UI -->', ...tags].join('\n\t\t') + '\n\t</head>'
     return text.replaceAll('</head>', injected)
@@ -175,10 +172,10 @@ async function applyThemeConfig(isAdd) {
     // 更新主题配置
     await theme.updateThemeConfig(ext.theme, ext.package)
     // 复制代码文件到应用目录
-    await utils.copyFolder(ext.core, app.workbench.inject)
+    await utils.copyFolder(ext.core, injectDir)
   } else {
     // 清理应用目录
-    await utils.deleteFolder(app.workbench.inject)
+    await utils.deleteFolder(injectDir)
   }
 
   // 提示用户重启应用或重新加载窗口

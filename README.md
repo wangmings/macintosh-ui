@@ -38,7 +38,7 @@
 
 1. 安装扩展并启动 VS Code。
 2. 第一次启动时，如果检测到脚本尚未注入，会提示是否注入主题脚本。
-3. 选择 `YES` 后执行注入。
+3. 选择 `确认` 后执行注入。
 4. 根据提示选择 `重新加载` 或 `立即重启`，让修改生效。
 5. 打开 `Preferences: Color Theme`，切换到任意 `Apple ...` 主题。
 
@@ -56,10 +56,10 @@
 ### 这些命令分别做什么
 
 - `打开主题配置`：把扩展内的 [`vscode`](./vscode) 目录加入当前工作区，方便直接修改主题 JSON、注入 CSS/JS、字体资源
-- `更新主题配置`：重新注入 HTML / JS / CSS / 字体资源，并同步 `vscode/theme/*.json` 到 `package.json` 的主题列表
+- `更新主题配置`：重新注入 `vscode/core` 中的 HTML / JS / CSS / 字体资源，并同步 `vscode/theme/json/*.json` 到 `package.json` 的主题列表
 - `清除主题配置`：恢复被注入前的文件内容，并删除注入目录
 - `备份主题配置`：将扩展内的 [`vscode`](./vscode) 目录备份到 `~/Macintosh-UI-Backup`
-- `启用/关闭磨砂玻璃`：写入 `workbench.colorCustomizations`，切换透明与磨砂相关配置
+- `启用/关闭磨砂玻璃`：写入 `workbench.colorCustomizations`，切换透明与磨砂相关配置；当前实现会直接覆盖现有颜色自定义配置
 
 ## 字体配置
 
