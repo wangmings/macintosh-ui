@@ -4,3 +4,4 @@
 node_modules
 .vscode-test
 macintosh-ui-*.vsix
+vscode/patchs/apps/code

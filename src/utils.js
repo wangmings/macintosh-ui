@@ -101,8 +101,8 @@ async function packageJSON(packFile) {
  * @returns {{default: string, setting: string}} 字体族字符串对象或对象
  */
 function getVScodeFonts() {
-  const defaultFont = getVScodeConfig('default.ui.fontFamily')
-  const settingFont = getVScodeConfig('setting.ui.fontFamily')
+  const defaultFont = getVScodeConfig('default.ui.fontFamily').trim()
+  const settingFont = getVScodeConfig('setting.ui.fontFamily').trim()
   return (!defaultFont || !settingFont)
     ? { default: '', setting: '' }
     : { default: defaultFont, setting: `${settingFont}, ${defaultFont}` }
@@ -254,12 +254,12 @@ function getMessages() {
     en_us: {
       open: {
         fail: 'Failed to add to workspace: %path%',
-        exist: 'Already in workspace: %path%',
-        success: 'Added to workspace: %path%'
+        exist: 'Already in workspace!',
+        success: 'Added to workspace!'
       },
       patch: {
-        bar: '[TraeCN]: Failed to apply activity bar patch. Please update the patch code for this version.',
-        glass: 'Failed to apply frosted glass patch. Please update the patch code for this version.'
+        bar: 'Patch addition to the activity bar failed! The current version does not support it!',
+        glass: 'Patch addition to the frosted glass failed! The current version does not support it!'
       },
       theme: {
         update: 'Theme settings updated. Restart to apply changes?',
@@ -268,7 +268,7 @@ function getMessages() {
         import: 'Theme settings imported successfully'
       },
       button: {
-        theme:{
+        themes:{
           restart: 'Restart Now',
           reload: 'Reload'
         },
@@ -285,12 +285,12 @@ function getMessages() {
     zh_cn: {
       open: {
         fail: '添加到工作区失败：%path%',
-        exist: '已在工作区：%path%',
-        success: '已添加到工作区：%path%'
+        exist: '已在工作区!',
+        success: '已添加到工作区!'
       },
       patch: {
-        bar: '[TraeCN]: 活动栏添加补丁失败！当前版本不支持，请更新补丁代码。',
-        glass: '应用玻璃效果补丁失败！当前版本不支持，请更新补丁代码。'
+        bar: '活动栏补丁添加失败！当前版本不支持！',
+        glass: '毛玻璃效果补丁添加失败！当前版本不支持！'
       },
       theme: {
         update: '已更新主题配置，是否重启以生效？',
@@ -299,7 +299,7 @@ function getMessages() {
         import: '已导入主题配置'
       },
       button: {
-        theme:{
+        themes:{
           restart: '立即重启',
           reload: '重新加载'
         },

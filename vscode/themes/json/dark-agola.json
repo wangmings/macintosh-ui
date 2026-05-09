@@ -1,0 +1,519 @@
+{
+  "name": "Zed Agola",
+  "type": "dark",
+  "semanticTokenColors": {
+    "variable.declaration": {},
+    "variable.defaultLibrary": {
+      "foreground": "#F6CE59"
+    }
+  },
+  "tokenColors": [
+    {
+      "name": "Comment: 注释",
+      "settings": {
+        "fontStyle": "italic",
+        "foreground": "#808080"
+      },
+      "scope": [
+        "comment",
+        "comment.source.cmake",
+        "punctuation.definition.comment"
+      ]
+    },
+    {
+      "name": "Variable: 变量",
+      "settings": {
+        "foreground": "#F7F7F7"
+      },
+      "scope": [
+        "source",
+        "variable",
+        "meta.block.c",
+        "meta.block.objcpp",
+        "meta.object-literal",
+        "meta.function-call.c",
+        "variable.other.constant",
+        "meta.function-call.objc",
+        "storage.modifier.import.java",
+        "entity.name.function.preprocessor.c"
+      ]
+    },
+    {
+      "name": "Basic: 基本类型",
+      "scope": [
+        "constant.language",
+        "variable.language.applescript"
+      ],
+      "settings": {
+        "foreground": "#F266AB"
+      }
+    },
+    {
+      "name": "Storage: 变量类型",
+      "settings": {
+        "foreground": "#F2F013"
+      },
+      "scope": [
+        "storage.type",
+        "entity.name.type.cpp",
+        "storage.modifier.objcpp",
+        "meta.argument-type.objc",
+        "support.type.quartz.objc",
+        "support.type.property-name",
+        "entity.name.type.parameter.cpp",
+        "meta.body.function.definition.cpp",
+        "keyword.control.def.set.applescript",
+        "keyword.other.declaration-specifier.swift"
+      ]
+    },
+    {
+      "name": "Keyword: 关键字",
+      "settings": {
+        "foreground": "#5FDAFF"
+      },
+      "scope": [
+        "keyword",
+        "storage.modifier",
+        "storage.type.class",
+        "constant.other.php",
+        "entity.name.tag.css",
+        "entity.name.tag.html",
+        "entity.name.tag.yaml",
+        "support.function.lua",
+        "storage.type.function",
+        "support.function.swift",
+        "entity.name.type.kotlin",
+        "entity.scope.name.objcpp",
+        "support.class.cocoa.objcpp",
+        "storage.type.function.arrow",
+        "support.function.print.groovy",
+        "entity.name.tag.localname.xml",
+        "constant.other.text.applescript",
+        "support.type.property-name.json",
+        "keyword.control.tell.applescript",
+        "keyword.control.function.applescript",
+        "punctuation.definition.variable.ruby",
+        "keyword.control.def.global.applescript",
+        "constant.other.miscellaneous.applescript",
+        "support.function.built-in.command.applescript",
+        "support.function.system-events.processes.applescript"
+      ]
+    },
+    {
+      "name": "Number: 数字",
+      "settings": {
+        "fontStyle": "",
+        "foreground": "#BBEE78"
+      },
+      "scope": [
+        "constant.numeric",
+        "meta.parameter-expansion"
+      ]
+    },
+    {
+      "name": "String: 字符串",
+      "settings": {
+        "foreground": "#F6CE59"
+      },
+      "scope": [
+        "string",
+        "constant.character.escape.applescript"
+      ]
+    },
+    {
+      "name": "Control: 控制流",
+      "settings": {
+        "foreground": "#FF7E67"
+      },
+      "scope": [
+        "keyword.control",
+        "keyword.operator.logical",
+        "keyword.operator.expression",
+        "punctuation.separator.statement.and"
+      ]
+    },
+    {
+      "name": "Class_Name: 类名",
+      "settings": {
+        "foreground": "#FFD96A"
+      },
+      "scope": [
+        "support.class.promise",
+        "entity.name.type.class",
+        "entity.name.type.objcpp",
+        "support.class.built-in.applescript"
+      ]
+    },
+    {
+      "name": "Class_Inherit: 类继承",
+      "scope": [
+        "entity.other.inherited-class"
+      ],
+      "settings": {
+        "foreground": "#FDFF00",
+        "fontStyle": "  bold"
+      }
+    },
+    {
+      "name": "Function_Name: 函数名",
+      "settings": {
+        "foreground": "#85EF47"
+      },
+      "scope": [
+        "meta.method.groovy",
+        "entity.name.function",
+        "support.function.builtin",
+        "support.function.misc.css",
+        "support.function.math.php",
+        "support.function.gradient.css",
+        "support.function.cocoa.objcpp",
+        "support.function.datetime.php",
+        "support.function.transform.css",
+        "support.function.construct.php"
+      ]
+    },
+    {
+      "name": "Function_Argument: 函数参数",
+      "settings": {
+        "foreground": "#F7F7F7",
+        "fontStyle": " bold"
+      },
+      "scope": [
+        "variable.parameter",
+        "variable.parameter.function.language.special.self.python"
+      ]
+    },
+    {
+      "name": "Function_Object: 默认对象",
+      "settings": {
+        "foreground": "#C3F8FF"
+      },
+      "scope": [
+        "keyword.operator.new",
+        "variable.language.this",
+        "variable.language.special",
+        "entity.other.attribute-name"
+      ]
+    },
+    {
+      "name": "Library_Object: 内置对象",
+      "scope": [
+        "variable.other.object",
+        "variable.language.objc",
+        "meta.function-call.generic.python",
+        "variable.other.constant.object.js",
+        "meta.function.definition.parameters.c"
+      ],
+      "settings": {
+        "foreground": "#74F9FF"
+      }
+    },
+    {
+      "name": "Variable_Call: 变量调用",
+      "scope": [
+        "meta.attribute.python",
+        "support.variable.swift",
+        "variable.other.property.js",
+        "entity.other.attribute.lua",
+        "variable.other.member.objc"
+      ],
+      "settings": {
+        "foreground": "#9EFCB4"
+      }
+    },
+    {
+      "name": "Operator: 运算符",
+      "settings": {
+        "foreground": "#F5A255"
+      },
+      "scope": [
+        "keyword.operator",
+        "constant.other.placeholder.c"
+      ]
+    },
+    {
+      "name": "Special: 运算符${}",
+      "scope": [
+        "punctuation.definition.template-expression",
+        "constant.character.format.placeholder.other.python"
+      ],
+      "settings": {
+        "foreground": "#FFC18E"
+      }
+    },
+    {
+      "name": "Bracket: 括号",
+      "scope": [
+        "meta.brace",
+        "punctuation.shell",
+        "punctuation.definition",
+        "punctuation.section.block",
+        "punctuation.section.parens",
+        "punctuation.section.arguments",
+        "punctuation.section.parameters",
+        "punctuation.section.arithmetic.shell",
+        "punctuation.section.group.applescript"
+      ],
+      "settings": {
+        "foreground": "#E3F8FF"
+      }
+    },
+    {
+      "name": "Bracket: 括号()",
+      "scope": [
+        "meta.brace.round"
+      ],
+      "settings": {
+        "foreground": "#FCB1B1"
+      }
+    },
+    {
+      "name": "Bracket: 括号[]",
+      "scope": [
+        "meta.brace.square",
+        "punctuation.definition.array"
+      ],
+      "settings": {
+        "foreground": "#FEC771"
+      }
+    },
+    {
+      "name": "Punctuation:符号(`'\")",
+      "settings": {
+        "foreground": "#B7FBFF"
+      },
+      "scope": [
+        "punctuation.definition.string",
+        "keyword.operator.comparison.php",
+        "keyword.operator.arithmetic.php",
+        "punctuation.support.type.property-name",
+        "punctuation.separator.key-value.mapping.yaml"
+      ]
+    },
+    {
+      "name": "Punctuation:符号(,.;:=)",
+      "scope": [
+        "punctuation.accessor",
+        "punctuation.separator",
+        "punctuation.terminator",
+        "keyword.operator.assignment"
+      ],
+      "settings": {
+        "foreground": "#F9DE79"
+      }
+    },
+    {
+      "name": "Shell_Command: 命令",
+      "scope": [
+        "entity.name.command",
+        "support.function.builtin.shell"
+      ],
+      "settings": {
+        "foreground": "#3DD5E7"
+      }
+    },
+    {
+      "name": "Shell_Option: 选项",
+      "scope": [
+        "constant.other.option",
+        "string.unquoted.argument"
+      ],
+      "settings": {
+        "foreground": "#ECFF14"
+      }
+    },
+    {
+      "name": "Shell_Variable: 变量调用",
+      "scope": [
+        "variable.other.normal.shell"
+      ],
+      "settings": {
+        "foreground": "#5AF78E"
+      }
+    },
+    {
+      "name": "Shell_Bracket:小括号:$()",
+      "scope": [
+        "punctuation.definition.evaluation.parens"
+      ],
+      "settings": {
+        "foreground": "#D9E066"
+      }
+    },
+    {
+      "name": "Shell_Bracket:大括号:${}",
+      "scope": [
+        "punctuation.definition.variable.shell"
+      ],
+      "settings": {
+        "foreground": "#F580FF"
+      }
+    },
+    {
+      "name": "Applescript: 函数调用",
+      "scope": [
+        "meta.statement.set.applescript",
+        "meta.block.repeat.with.applescript"
+      ],
+      "settings": {
+        "foreground": "#A6F6FF"
+      }
+    }
+  ],
+  "colors": {
+    "foreground": "#D5CED9",
+    "focusBorder": "#746f77",
+    "errorForeground": "#FF5722",
+    "activityBar.foreground": "#BAAFC0",
+    "activityBar.background": "#23262E",
+    "activityBar.dropBackground": "#3a404e",
+    "activityBarBadge.background": "#10a793",
+    "activityBarBadge.foreground": "#20232B",
+    "badge.background": "#00b0ff",
+    "badge.foreground": "#20232B",
+    "breadcrumb.foreground": "#f29c14",
+    "breadcrumb.focusForeground": "#00e8c6",
+    "button.background": "#00e8c5cc",
+    "button.hoverBackground": "#07d4b6cc",
+    "debugExceptionWidget.border": "#FF9F2E60",
+    "debugExceptionWidget.background": "#FF9F2E60",
+    "debugToolBar.background": "#20232A",
+    "diffEditor.removedTextBackground": "#F21B3F20",
+    "diffEditor.insertedTextBackground": "#29BF1220",
+    "dropdown.border": "#363c49",
+    "dropdown.background": "#2b303b",
+    "editor.background": "#31333D",
+    "editor.foreground": "#999999",
+    "editorHoverWidget.border": "#fee56c",
+    "editorStickyScrollHover.background": "#FF9F2E60",
+    "editor.selectionBackground": "#535566",
+    "editor.findMatchBackground": "#f39d1256",
+    "editor.wordHighlightBackground": "#4F4355",
+    "editor.lineHighlightBackground": "#31333D",
+    "editor.hoverHighlightBackground": "#373941",
+    "editor.rangeHighlightBackground": "#372F3C",
+    "editor.selectionHighlightBackground": "#4F435580",
+    "editor.findMatchHighlightBackground": "#59b8b377",
+    "editor.wordHighlightStrongBackground": "#db45a280",
+    "editorBracketMatch.background": "#31333D",
+    "editorCodeLens.foreground": "#746f77",
+    "editorCursor.foreground": "#f7f7f8",
+    "editorError.foreground": "#FC644D",
+    "editorGroup.background": "#23262E",
+    "editorGroup.dropBackground": "#495061d7",
+    "editorGroupHeader.tabsBackground": "#23262E",
+    "editorGutter.background": "#31333D",
+    "editorGutter.addedBackground": "#9BC53DBB",
+    "editorGutter.deletedBackground": "#FC644DBB",
+    "editorGutter.modifiedBackground": "#5BC0EBBB",
+    "editorHoverWidget.background": "#373941",
+    "editorIndentGuide.background1": "#292d37",
+    "editorIndentGuide.activeBackground1": "#fee56c",
+    "editorLineNumber.foreground": "#746f77",
+    "editorLineNumber.activeForeground": "#f7f7f8",
+    "editorLink.activeForeground": "#3B79C7",
+    "editorRuler.foreground": "#4F4355",
+    "editorSuggestWidget.background": "#20232A",
+    "editorSuggestWidget.selectedBackground": "#373941",
+    "editorSuggestWidget.highlightForeground": "#fee56c",
+    "editorWarning.foreground": "#FF9F2E",
+    "editorWhitespace.foreground": "#333844",
+    "editorWidget.background": "#20232A",
+    "extensionButton.prominentBackground": "#07d4b6cc",
+    "extensionButton.prominentHoverBackground": "#07d4b5b0",
+    "gitDecoration.ignoredResourceForeground": "#555555",
+    "icon.foreground": "#989aa0",
+    "input.background": "#2b303b",
+    "input.placeholderForeground": "#746f77",
+    "inputOption.activeBorder": "#C668BA",
+    "inputValidation.infoBorder": "#3A6395",
+    "inputValidation.errorBorder": "#D65343",
+    "inputValidation.warningBorder": "#DE9237",
+    "inputValidation.infoBackground": "#3A6395",
+    "inputValidation.errorBackground": "#D65343",
+    "inputValidation.warningBackground": "#DE9237",
+    "list.dropBackground": "#3a404e",
+    "list.focusForeground": "#00e8c6",
+    "list.focusBackground": "#282b35",
+    "list.hoverForeground": "#00e8c6",
+    "list.hoverBackground": "#303642",
+    "list.errorForeground": "#FF5722",
+    "list.highlightForeground": "#fee56c",
+    "list.activeSelectionBackground": "#23262E",
+    "list.activeSelectionForeground": "#00e8c6",
+    "list.inactiveSelectionBackground": "#23262E",
+    "list.inactiveSelectionForeground": "#00e8c6",
+    "merge.currentHeaderBackground": "#F92672",
+    "merge.currentContentBackground": "#F9267240",
+    "merge.incomingHeaderBackground": "#3B79C7BB",
+    "merge.incomingContentBackground": "#3B79C740",
+    "minimapSlider.background": "#58607460",
+    "minimapSlider.hoverBackground": "#60698060",
+    "minimapSlider.activeBackground": "#60698060",
+    "notification.background": "#2d313b",
+    "notification.infoBackground": "#00b0ff",
+    "notification.errorBackground": "#FC644D",
+    "notification.buttonBackground": "#00e8c5cc",
+    "notification.warningBackground": "#FF9F2E",
+    "notification.buttonHoverBackground": "#07d4b5b0",
+    "panel.border": "#1B1D23",
+    "panel.background": "#23262E",
+    "panelTitle.activeBorder": "#23262E",
+    "panelTitle.inactiveForeground": "#746f77",
+    "peekView.border": "#23262E",
+    "peekViewEditor.background": "#1A1C22",
+    "peekViewEditor.matchHighlightBackground": "#FF9F2E60",
+    "peekViewResult.background": "#1A1C22",
+    "peekViewResult.selectionBackground": "#23262E",
+    "peekViewResult.matchHighlightBackground": "#FF9F2E60",
+    "peekViewTitle.background": "#1A1C22",
+    "peekViewTitleDescription.foreground": "#746f77",
+    "pickerGroup.border": "#4F4355",
+    "pickerGroup.foreground": "#746f77",
+    "progressBar.background": "#C668BA",
+    "scrollbar.shadow": "#000000",
+    "scrollbarSlider.background": "#03A9F438",
+    "scrollbarSlider.hoverBackground": "#3A3F4CAA",
+    "scrollbarSlider.activeBackground": "#3A3F4CCC",
+    "selection.background": "#746f77",
+    "sideBar.background": "#23262E",
+    "sideBar.foreground": "#999999",
+    "sideBarSectionHeader.background": "#23262E",
+    "sideBarTitle.foreground": "#00e8c6",
+    "statusBar.background": "#20232a",
+    "statusBar.noFolderBackground": "#23262E",
+    "statusBar.debuggingBackground": "#FC644D",
+    "statusBarItem.hoverBackground": "#07d4b5b0",
+    "statusBarItem.activeBackground": "#00e8c5cc",
+    "statusBarItem.remoteBackground": "#454e65",
+    "statusBarItem.remoteForeground": "#f7f7f8",
+    "statusBarItem.prominentBackground": "#07d4b5b0",
+    "statusBarItem.prominentHoverBackground": "#00e8c5cc",
+    "symbolIcon.functionForeground": "#00e8c6",
+    "tab.border": "#292d37",
+    "tab.activeBorder": "#f7f7f8",
+    "tab.hoverForeground": "#f7f7f8",
+    "tab.activeForeground": "#00e8c6",
+    "tab.activeBackground": "#23262e",
+    "tab.inactiveBackground": "#23262E",
+    "tab.inactiveForeground": "#999999",
+    "terminal.ansiRed": "#ee5d43",
+    "terminal.ansiBlue": "#7cb7ff",
+    "terminal.ansiCyan": "#00e8c6",
+    "terminal.ansiGreen": "#96E072",
+    "terminal.ansiYellow": "#FFE66D",
+    "terminal.ansiMagenta": "#ff00aa",
+    "terminal.ansiBrightRed": "#ee5d43",
+    "terminal.ansiBrightBlue": "#7cb7ff",
+    "terminal.ansiBrightCyan": "#00e8c6",
+    "terminal.ansiBrightGreen": "#96E072",
+    "terminal.ansiBrightYellow": "#FFE66D",
+    "terminal.ansiBrightMagenta": "#ff00aa",
+    "terminalCursor.background": "#23262E",
+    "terminalCursor.foreground": "#FFE66D",
+    "titleBar.activeBackground": "#20232a",
+    "titleBar.activeForeground": "#989aa0",
+    "walkThrough.embeddedEditorBackground": "#23262E",
+    "widget.shadow": "#14151A"
+  }
+}

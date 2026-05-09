@@ -1,40 +1,40 @@
 const path = require('path')
 const utils = require('./utils')
-const patch = require('../vscode/patch/main')
-const theme = require('../vscode/theme/main')
+const patch = require('../vscode/patchs/main')
+const theme = require('../vscode/themes/main')
+
+// 插件初始化状态
+let initStatus = false
+
+// 插件消息对象
+const messages = utils.getMessages()
 
 
-
-// 插件配置对象
-const plugin = {
-  init: false,
-  message: {},
-  backup: 'Macintosh-UI-Backup',
-
-  // 扩展路径
-  ext: {
-    vscode: 'vscode',
-    core: 'vscode/core',
-    theme: 'vscode/theme/json',
-    package: 'package.json'
+// 应用路径对象
+const app = {
+  execFile: 'bin/code',
+  mainFile: 'out/main.js',
+  workbench: {
+    rootDir: 'out/vs/code/electron-browser/workbench',
+    htmlFile: 'workbench.html',
+    injectDir: 'vscode'
   },
-
-  // 应用路径
-  app: {
-    exec: 'bin/code',
-    main: 'out/main.js',
-    workbench: {
-      dir: 'out/vs/code/electron-browser/workbench',
-      file: 'workbench.html',
-      inject: 'vscode'
-    },
-    desktop: {
-      dir: 'out/vs/workbench',
-      files: ['workbench.desktop.main.js', 'workbench.desktop.main.css']
-    }
+  desktop: {
+    rootDir: 'out/vs/workbench',
+    files: ['workbench.desktop.main.js', 'workbench.desktop.main.css']
   }
 }
 
+
+// 插件配置对象
+const ext = {
+  backupDir: 'Macintosh-UI-Backup',
+  vscodeDir: 'vscode',
+  assetsDir: 'vscode/assets',
+  themesDir: 'vscode/themes/json',
+  packageFile: 'package.json'
+
+}
 
 
 
@@ -44,34 +44,28 @@ const plugin = {
  * @param {*} ctx 扩展上下文
  */
 async function initPlugin(ctx) {
-  // 初始化插件
-  if (plugin.init) return
-  
+
   // 获取运行时基础路径
   const extRoot = ctx.extensionPath
   const appRoot = utils.appRoot
   const homeDir = utils.homeDir
-  const { app, ext } = plugin
 
-  // 初始化消息
-  plugin.message = utils.getMessages()
-  // 拼接备份路径
-  plugin.backup = path.join(homeDir, plugin.backup)
+  // 初始化插件路径
+  ext.backupDir = path.join(homeDir, ext.backupDir)
+  ext.vscodeDir = path.join(extRoot, ext.vscodeDir)
+  ext.assetsDir = path.join(extRoot, ext.assetsDir)
+  ext.themesDir = path.join(extRoot, ext.themesDir)
+  ext.packageFile = path.join(extRoot, ext.packageFile)
 
-  // 拼接 VS Code 应用路径
-  app.exec = path.join(appRoot, app.exec)
-  app.main = path.join(appRoot, app.main)
-  app.workbench.dir = path.join(appRoot, app.workbench.dir)
-  app.desktop.dir = path.join(appRoot, app.desktop.dir)
+  // 初始化应用路径
+  app.execFile = path.join(appRoot, app.execFile)
+  app.mainFile = path.join(appRoot, app.mainFile)
+  app.desktop.rootDir = path.join(appRoot, app.desktop.rootDir)
+  app.workbench.rootDir = path.join(appRoot, app.workbench.rootDir)
+  app.workbench.htmlFile = path.join(app.workbench.rootDir, app.workbench.htmlFile)
+  app.workbench.injectDir = path.join(app.workbench.rootDir, app.workbench.injectDir)
 
-  // 拼接扩展内部路径
-  ext.vscode = path.join(extRoot, ext.vscode)
-  ext.core = path.join(extRoot, ext.core)
-  ext.theme = path.join(extRoot, ext.theme)
-  ext.package = path.join(extRoot, ext.package)
 
-  // 初始化插件状态
-  plugin.init = true
 }
 
 
@@ -80,9 +74,9 @@ async function initPlugin(ctx) {
 
 // 打开主题配置目录
 function openThemeFolder() {
-  const folder = plugin.ext.vscode
+  const folder = ext.vscodeDir
   const status = utils.addWorkspace(folder)
-  utils.showMessage(plugin.message.open[status]?.replace('%path%', folder))
+  utils.showMessage(messages.open[status]?.replace('%path%', folder))
 
 }
 
@@ -96,22 +90,23 @@ function openThemeFolder() {
  * @returns {Promise<void>}
  */
 async function addPatchVSCode(isAdd) {
-  const { app, message } = plugin
-  const isTrae = app.desktop.dir.includes('Trae')
+  const { rootDir: desktopDir, files: desktopFiles } = app.desktop
+  const isTrae = desktopDir.includes('Trae')
   const fonts = utils.getVScodeFonts()
-  const isSetting = fonts.setting.trim().length > 0 ? true : false
+  const isSetting = fonts.setting.length > 0 ? true : false
 
   // 给应用添加活动栏补丁
-  for (const file of app.desktop.files) {
+  for (const file of desktopFiles) {
     const ext = path.extname(file)
-    const filePath = path.join(app.desktop.dir, file)
+    const filePath = path.join(desktopDir, file)
     await utils.readWriteBackupFile(isAdd, filePath, async (text) => {
       if (isTrae) {
-        try {
-          text = await patch.traeActivityBar(ext, text)
-        } catch (err) {
-          console.error(err.message)
-          utils.showMessage(message.patch.bar)
+        const { data, status } = patch.traeActivityBar(ext, text)
+        if (status.fail.length > 0) {
+          console.warn('活动栏补丁失败：', status)
+          utils.showMessage(messages.patch.bar)
+        } else {
+          text = data
         }
       }
       if (isSetting) text = text.replaceAll(fonts.default, fonts.setting)
@@ -121,13 +116,15 @@ async function addPatchVSCode(isAdd) {
 
 
   // 给应用添加玻璃效果补丁
-  await utils.readWriteBackupFile(isAdd, app.main, async (text) => {
-    try {
-      return await patch.frostedGlass(text)
-    } catch (err) {
-      utils.showMessage(message.patch.glass)
-      console.error(err.message)
+  await utils.readWriteBackupFile(isAdd, app.mainFile, async (text) => {
+    const { data, status } = patch.frostedGlass(text)
+    if (status.fail.length > 0) {
+      console.warn('玻璃效果补丁失败：', status)
+      utils.showMessage(messages.patch.glass)
+    } else {
+      text = data
     }
+    return text
   })
 
 }
@@ -144,19 +141,32 @@ async function addPatchVSCode(isAdd) {
  * @returns {Promise<void>}
  */
 async function applyThemeConfig(isAdd) {
+  const { injectDir, htmlFile } = app.workbench
+
   // 从插件配置中获取必要路径
-  const { app, ext } = plugin
-  const injectDir = path.join(app.workbench.dir, app.workbench.inject)
-  const workbenchHtml = path.join(app.workbench.dir, app.workbench.file)
+  const injectDirName = path.basename(injectDir)
 
   // 为VSCode添加补丁
   await addPatchVSCode(isAdd)
 
+  if (isAdd) {
+    // 更新主题配置
+    await theme.updateThemeConfig(ext.themesDir, ext.packageFile)
+    // 复制代码文件到应用目录
+    await utils.copyFolder(ext.assetsDir, injectDir)
+  } else {
+    // 清理应用目录
+    await utils.deleteFolder(injectDir)
+  }
+
+
+
   // 应用注入的代码文件
-  await utils.readWriteBackupFile(isAdd, workbenchHtml, async (text) => {
-    const files = await utils.getFolderItems(ext.core, 'file')
+  await utils.readWriteBackupFile(isAdd, htmlFile, async (text) => {
+    const files = await utils.getFolderItems(injectDir, 'file')
+    if (files.length === 0) return null
     const tags = files.map(file => {
-      const url = `./${app.workbench.inject}/${file}`
+      const url = `./${injectDirName}/${file}`
       return {
         '.js': `<script async src=${url}></script>`,
         '.css': `<link async rel="stylesheet" href=${url}>`
@@ -168,22 +178,13 @@ async function applyThemeConfig(isAdd) {
 
 
 
-  if (isAdd) {
-    // 更新主题配置
-    await theme.updateThemeConfig(ext.theme, ext.package)
-    // 复制代码文件到应用目录
-    await utils.copyFolder(ext.core, injectDir)
-  } else {
-    // 清理应用目录
-    await utils.deleteFolder(injectDir)
-  }
+
 
   // 提示用户重启应用或重新加载窗口
-  const { reload, restart } = plugin.message.button.theme
-  const { update, clean } = plugin.message.theme
-  const message = isAdd ? update : clean
+  const { restart, reload } = messages.button.themes
+  const message = isAdd ? messages.theme.update : messages.theme.clean
   utils.showMessage(message, reload, restart).then(opt => {
-    if (opt === restart) utils.restartVScodeApp(plugin.app.exec)
+    if (opt === restart) utils.restartVScodeApp(app.execFile)
     else if (opt === reload) utils.execCommand('workbench.action.reloadWindow')
   })
 
@@ -198,9 +199,8 @@ async function applyThemeConfig(isAdd) {
  * 创建主题备份
  */
 async function createThemeBackup() {
-  const { ext, backup, message } = plugin
-  await utils.copyFolder(ext.vscode, backup)
-  utils.showMessage(message.theme.backup.replace('%path%', backup))
+  await utils.copyFolder(ext.vscodeDir, ext.backupDir)
+  utils.showMessage(messages.theme.backup.replace('%path%', ext.backupDir))
 }
 
 
@@ -227,14 +227,15 @@ function applyFrostedGlass(enabled) {
 async function activate(ctx) {
 
   // 初始化插件路径
-  await initPlugin(ctx)
-  console.log('插件已激活', plugin)
+  if (!initStatus) await initPlugin(ctx)
+  initStatus = true
+  console.log('插件已激活', {ext, app, messages})
 
   // 检查注入目录是否存在
-  if (!await utils.exists(plugin.app.workbench.inject)) {
-    const { confirm, cancel } = plugin.message.button.inject
-    utils.showMessage(plugin.message.inject, confirm, cancel).then(opt => {
-      if (opt === confirm) applyThemeConfig(true)
+  if (!await utils.exists(app.workbench.injectDir)) {
+    const { confirm, cancel } = messages.button.inject
+    utils.showMessage(messages.inject, confirm, cancel).then(async (opt) => {
+      if (opt === confirm) await applyThemeConfig(true)
     })
   }
 

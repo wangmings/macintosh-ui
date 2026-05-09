@@ -7,8 +7,8 @@
     "lib": ["ES2022"]
   },
   "include": [
-    "src/**/*.js", "vscode/patch/*.js"
-  ],
+    "src/**/*.js", "vscode/patchs/*.js"
+, "vscode/patchs/apps/patch.config.js"  ],
 
   "exclude": ["node_modules", ".trae-cn", "vscode"]
 }

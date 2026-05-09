@@ -56,7 +56,7 @@
 ### 这些命令分别做什么
 
 - `打开主题配置`：把扩展内的 [`vscode`](./vscode) 目录加入当前工作区，方便直接修改主题 JSON、注入 CSS/JS、字体资源
-- `更新主题配置`：重新注入 `vscode/core` 中的 HTML / JS / CSS / 字体资源，并同步 `vscode/theme/json/*.json` 到 `package.json` 的主题列表
+- `更新主题配置`：重新注入 `vscode/assets` 中的 CSS / JS / 字体资源，并同步 `vscode/themes/json/*.json` 到 `package.json` 的主题列表
 - `清除主题配置`：恢复被注入前的文件内容，并删除注入目录
 - `备份主题配置`：将扩展内的 [`vscode`](./vscode) 目录备份到 `~/Macintosh-UI-Backup`
 - `启用/关闭磨砂玻璃`：写入 `workbench.colorCustomizations`，切换透明与磨砂相关配置；当前实现会直接覆盖现有颜色自定义配置
@@ -93,11 +93,11 @@ macintosh-ui/
 │   ├── extension.js        # 扩展入口，注册命令与执行注入流程
 │   └── utils.js            # 文件读写、备份、重启、配置读写等工具
 ├── vscode/                 # 注入资源与主题系统
-│   ├── core/               # 核心运行时资源：UI 注入、样式覆盖、字体配置
-│   ├── patch/              # 源码补丁模块：窗口效果、活动栏逻辑等
-│   ├── theme/              # 主题系统：主题数据、生成脚本、开发文档
+│   ├── assets/             # 运行时注入资源：CSS、JS、字体文件
+│   ├── patchs/             # 源码补丁模块：窗口效果、活动栏逻辑等
+│   ├── themes/             # 主题系统：主题数据、生成脚本、开发文档
 │   └── README.md           # vscode 子目录说明文档
-├── icons/                  # 扩展图标资源目录
+├── icon/                   # 扩展图标资源目录
 ├── package.nls.json        # 默认语言文案
 ├── package.nls.zh-cn.json  # 中文文案
 ├── CHANGELOG.md            # 更新记录
@@ -125,13 +125,13 @@ pnpm run test
 
 ### 主题开发
 
-主题文件位于 [`vscode/theme`](./vscode/theme)。执行 `更新主题配置` 时，扩展会通过 [`vscode/theme/main.js`](./vscode/theme/main.js) 扫描这个目录下的 `.json` 文件，并自动刷新 `package.json` 中的 `contributes.themes`。
+主题文件位于 [`vscode/themes`](./vscode/themes)。执行 `更新主题配置` 时，扩展会通过 [`vscode/themes/main.js`](./vscode/themes/main.js) 扫描这个目录下的 `.json` 文件，并自动刷新 `package.json` 中的 `contributes.themes`。
 
 如果你要调整语法高亮作用域，可以参考：
 
 - [`vscode/README.md`](./vscode/README.md)
-- [`vscode/theme/docs/scope.md`](./vscode/theme/docs/scope.md)
-- [`vscode/theme/docs/theme.md`](./vscode/theme/docs/theme.md)
+- [`vscode/themes/docs/scope.md`](./vscode/themes/docs/scope.md)
+- [`vscode/themes/docs/theme.md`](./vscode/themes/docs/theme.md)
 
 ## 兼容性
 

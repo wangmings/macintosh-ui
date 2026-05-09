@@ -5,119 +5,119 @@
 ```mermaid
 flowchart TD
     A[VS Code 启动扩展] --> B[activate ctx]
-    B --> C[initPlugin]
-    C --> D{宿主工作台 injectDir 已存在?}
+    B --> C{initStatus 是否为 false}
+    C -- 是 --> D[initPlugin]
+    C -- 否 --> E[跳过初始化]
+    D --> F[标记 initStatus=true]
+    E --> F
+    F --> G{injectDir 是否存在}
 
-    D -- 否 --> E[弹窗询问注入]
-    D -- 是 --> H[注册右键菜单]
-    E --> H
-    E -- 确认 --> F[applyThemeConfig true]
-    E -- 取消 --> G[等待手动命令]
+    G -- 否 --> H[弹窗询问是否注入]
+    G -- 是 --> J[注册右键菜单命令]
+    H --> J
+    H -- 确认 --> I[applyThemeConfig true]
+    H -- 取消 --> K[等待手动命令]
 
-    H --> I1[open theme]
-    H --> I2[update theme]
-    H --> I3[clean theme]
-    H --> I4[backup theme]
-    H --> I5[glass enable]
-    H --> I6[glass disable]
+    J --> L1[menu.open.theme]
+    J --> L2[menu.update.theme]
+    J --> L3[menu.clean.theme]
+    J --> L4[menu.backup.theme]
+    J --> L5[menu.glass.enable]
+    J --> L6[menu.glass.disable]
 
-    I1 --> J1[openThemeFolder]
-    I2 --> K[applyThemeConfig true]
-    I3 --> L[applyThemeConfig false]
-    I4 --> M[createThemeBackup]
-    I5 --> N[applyFrostedGlass true]
-    I6 --> O[applyFrostedGlass false]
-    M --> M1[复制 vscode 到备份目录]
-    N --> N1[写入 workbench.colorCustomizations]
-    O --> O1[清空 workbench.colorCustomizations]
+    L1 --> M1[openThemeFolder]
+    L2 --> N1[applyThemeConfig true]
+    L3 --> N2[applyThemeConfig false]
+    L4 --> O1[createThemeBackup]
+    L5 --> P1[applyFrostedGlass true]
+    L6 --> P2[applyFrostedGlass false]
+    O1 --> O2[复制整个 vscode 到备份目录]
+    P1 --> P3[写入 workbench.colorCustomizations]
+    P2 --> P4[清空 workbench.colorCustomizations]
 
-    subgraph P[注入/清理主流程]
-        P1[addPatchVSCode]
-        P2[扫描 vscode/core 文件]
-        P3[修改 workbench.html]
-        P4[修改 main.js]
-        P5{isAdd?}
-        P6[updateThemeConfig]
-        P7[复制 core 到 injectDir]
-        P8[删除 injectDir]
-        P9[弹窗重启]
+    subgraph Q[applyThemeConfig 主流程]
+        Q1[addPatchVSCode]
+        Q2{isAdd?}
+        Q3[updateThemeConfig]
+        Q4[复制 vscode/assets 到 injectDir]
+        Q5[删除 injectDir]
+        Q6[修改 workbench.html 注入标签或恢复备份]
+        Q7[弹窗提示 reload / restart]
     end
 
-    K --> P1
-    L --> P1
-    P1 --> P2
-    P2 --> P3
-    P3 --> P4
-    P4 --> P5
-    P5 -- 是 --> P6
-    P6 --> P7
-    P7 --> P9
-    P5 -- 否 --> P8
-    P8 --> P9
-
-    subgraph Q[活动栏补丁]
-        Q1[读取字体]
-        Q2[遍历文件]
-        Q3[备份修改]
-        Q4{包含 Trae?}
-        Q5[特殊处理]
-        Q6[替换字体]
-    end
-
-    P1 --> Q1
+    I --> Q1
+    N1 --> Q1
+    N2 --> Q1
     Q1 --> Q2
-    Q2 --> Q3
+    Q2 -- 是 --> Q3
     Q3 --> Q4
-    Q4 -- 是 --> Q5
-    Q4 -- 否 --> Q6
+    Q4 --> Q6
+    Q2 -- 否 --> Q5
     Q5 --> Q6
+    Q6 --> Q7
 
-    subgraph R[HTML/JS注入]
-        R1[读取 core 资源]
-        R2[向 workbench.html 注入 script 和 link 标签]
-        R3[frostedGlass patch]
-        R4[向 main.js 注入 frostedGlass 参数]
-        R5[替换透明背景]
+    subgraph R[addPatchVSCode 补丁流程]
+        R1[读取桌面端工作台文件列表]
+        R2[读取字体配置]
+        R3[遍历 workbench.desktop.main.js / css]
+        R4[readWriteBackupFile 生成或恢复 bak]
+        R5{是否 Trae 环境}
+        R6[应用 traeActivityBar 补丁]
+        R7[替换默认 UI 字体]
+        R8[处理 out/main.js 的 frostedGlass 补丁]
     end
 
-    P2 --> R1
-    P3 --> R2
-    P4 --> R3
+    Q1 --> R1
+    R1 --> R2
+    R2 --> R3
     R3 --> R4
     R4 --> R5
+    R5 -- 是 --> R6
+    R5 -- 否 --> R7
+    R6 --> R7
+    R7 --> R8
 
-    subgraph S[主题同步]
-        S1[扫描主题]
-        S2[读取信息]
-        S3[生成配置]
-        S4[回写 package.json]
+    subgraph S[主题同步流程]
+        S1[扫描 vscode/themes/json]
+        S2[读取每个主题的 name / type]
+        S3[生成 Apple 主题注册项]
+        S4[回写 package.json contributes.themes]
     end
 
-    P6 --> S1
+    Q3 --> S1
     S1 --> S2
     S2 --> S3
     S3 --> S4
 
-    P9 --> T{用户选择}
-    T -- Reload --> T1[刷新窗口]
-    T -- Restart --> T2[重启软件]
-    T2 --> T3[退出当前进程]
+    subgraph T[HTML 注入流程]
+        T1[读取 injectDir 下文件列表]
+        T2[按扩展名生成 script / link 标签]
+        T3[替换 workbench.html 里的 head 结束标签]
+    end
+
+    Q6 --> T1
+    T1 --> T2
+    T2 --> T3
+
+    Q7 --> U{用户选择}
+    U -- Reload --> U1[执行 workbench.action.reloadWindow]
+    U -- Restart --> U2[重启应用并退出当前进程]
 ```
 
 ## 模块关系
 
 - `src/extension.js`：扩展入口，负责初始化、注册命令、执行注入/清理/备份流程。
 - `src/utils.js`：提供运行时提示文案、语言切换、文件备份恢复、目录复制、配置读写、工作区添加、应用重启等通用能力。
-- `vscode/core/`：真正注入到宿主工作台里的 CSS、JS 和字体资源。
-- `vscode/patch/config.js`：活动栏补丁配置与毛玻璃配置。
-- `vscode/patch/main.js`：补丁执行入口，负责活动栏与毛玻璃文本替换。
-- `vscode/theme/main.js`：扫描 `vscode/theme/json/*.json`，动态刷新 `package.json` 里的主题列表。
+- `vscode/assets/`：真正注入到宿主工作台里的 CSS、JS 和字体资源。
+- `vscode/patchs/apps/patch.config.js`：活动栏补丁配置与毛玻璃配置。
+- `vscode/patchs/main.js`：补丁执行入口，负责活动栏与毛玻璃文本替换。
+- `vscode/themes/main.js`：扫描 `vscode/themes/json/*.json`，动态刷新 `package.json` 里的主题列表。
 
 ## 关键实现特点
 
 - 扩展不只是“切换主题”，还会直接修改宿主安装目录下的工作台文件。
 - 每次写入前会先生成 `.bak` 备份，清理时再从备份恢复。
-- 主题列表不是纯静态配置，而是由 `vscode/theme/json` 目录扫描后通过 `vscode/theme/main.js` 同步到 `package.json`。
+- 主题列表不是纯静态配置，而是由 `vscode/themes/json` 目录扫描后通过 `vscode/themes/main.js` 同步到 `package.json`。
 - 菜单里的 `glass enable/disable` 只修改 VS Code 配色配置；宿主 `main.js` 的毛玻璃参数注入发生在 `applyThemeConfig` 阶段。
 - 当前 `glass enable/disable` 的实现会直接写入 `workbench.colorCustomizations`，不会合并已有的用户自定义颜色配置。
-- 注入时会复制整个 `vscode/core` 到宿主工作台的 `injectDir`；清理时会直接删除该注入目录。
+- 注入时会复制整个 `vscode/assets` 到宿主工作台的 `injectDir`；清理时会直接删除该注入目录。

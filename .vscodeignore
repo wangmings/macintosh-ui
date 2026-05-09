@@ -1,10 +1,10 @@
 .test
 .vscode
 .vscode-test
-.trae-cn
 .git
 .gitignore
 .yarnrc
+vscode/patchs/apps/code
 vsc-extension-quickstart.md
 **/.DS_Store
 **/jsconfig.json

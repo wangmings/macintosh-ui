@@ -4,8 +4,8 @@
   "description": "Macintosh UI brings you a unique visual experience!",
   "author": "Wang Ming",
   "publisher": "Jake",
-  "icon": "icons/logo.png",
-  "version": "1.0.0",
+  "icon": "icon/logo.png",
+  "version": "2.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/wangmings/macintosh-ui.git"
@@ -117,62 +117,62 @@
       {
         "label": "Apple Zed Agola",
         "uiTheme": "vs-dark",
-        "path": "vscode/theme/json/dark-agola.json"
+        "path": "vscode/themes/json/dark-agola.json"
       },
       {
         "label": "Apple Deep I",
         "uiTheme": "vs-dark",
-        "path": "vscode/theme/json/dark-deep-i.json"
+        "path": "vscode/themes/json/dark-deep-i.json"
       },
       {
         "label": "Apple Deep II",
         "uiTheme": "vs-dark",
-        "path": "vscode/theme/json/dark-deep-ii.json"
+        "path": "vscode/themes/json/dark-deep-ii.json"
       },
       {
         "label": "Apple Deep III",
         "uiTheme": "vs-dark",
-        "path": "vscode/theme/json/dark-deep-iii.json"
+        "path": "vscode/themes/json/dark-deep-iii.json"
       },
       {
         "label": "Apple Deep IV",
         "uiTheme": "vs-dark",
-        "path": "vscode/theme/json/dark-deep-iv.json"
+        "path": "vscode/themes/json/dark-deep-iv.json"
       },
       {
         "label": "Apple GitHub Dark",
         "uiTheme": "vs-dark",
-        "path": "vscode/theme/json/dark-github.json"
+        "path": "vscode/themes/json/dark-github.json"
       },
       {
         "label": "Apple Material Dark",
         "uiTheme": "vs-dark",
-        "path": "vscode/theme/json/dark-material.json"
+        "path": "vscode/themes/json/dark-material.json"
       },
       {
         "label": "Apple One Dark Pro",
         "uiTheme": "vs-dark",
-        "path": "vscode/theme/json/dark-one.json"
+        "path": "vscode/themes/json/dark-one.json"
       },
       {
         "label": "Apple Zed Andromeda",
         "uiTheme": "vs-dark",
-        "path": "vscode/theme/json/dark-zed.json"
+        "path": "vscode/themes/json/dark-zed.json"
       },
       {
         "label": "Apple Boxy Yesterday",
         "uiTheme": "vs",
-        "path": "vscode/theme/json/light-boxy.json"
+        "path": "vscode/themes/json/light-boxy.json"
       },
       {
         "label": "Apple Zed Italic",
         "uiTheme": "vs",
-        "path": "vscode/theme/json/light-italic.json"
+        "path": "vscode/themes/json/light-italic.json"
       },
       {
         "label": "Apple Quiet VSC",
         "uiTheme": "vs",
-        "path": "vscode/theme/json/light-quiet.json"
+        "path": "vscode/themes/json/light-quiet.json"
       }
     ]
   },
