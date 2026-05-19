@@ -33,8 +33,8 @@ const activityBar = {
     {
       // 在 SOLO 恢复到 IDE 时按运行时值恢复活动栏显隐状态
       label: '从 SOLO 恢复到 IDE 时恢复活动栏运行时显隐状态',
-      search: 'this.stateModel.getRuntimeValue(ei.ACTIVITYBAR_HIDDEN,!0)||this.setActivityBarHidden(!1)',
-      replace: 'this.setActivityBarHidden(this.stateModel.getRuntimeValue(ei.ACTIVITYBAR_HIDDEN,!0))'
+      search: 'this.workbenchGrid.setViewVisible(this.soloTitleBarPartView,!1),this.setActivityBarHidden(!1),this.workbenchGrid.removeView(this.auxiliaryBarPartView),',
+      replace: 'this.workbenchGrid.setViewVisible(this.soloTitleBarPartView,!1),this.setActivityBarHidden(this.stateModel.getRuntimeValue(ei.ACTIVITYBAR_HIDDEN,!0)),this.stateModel.getRuntimeValue(ei.ACTIVITYBAR_HIDDEN,!0)&&this.workbenchGrid.resizeView(this.activityBarPartView,{height:this.workbenchGrid.getViewSize(this.activityBarPartView).height,width:0}),this.workbenchGrid.removeView(this.auxiliaryBarPartView),'
     },
 
     {
