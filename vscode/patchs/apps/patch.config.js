@@ -5,43 +5,43 @@ const activityBar = {
     {
       // 修复底层配置读取被硬编码为 default 的问题
       label: '移除 activityBar.location 的硬编码',
-      search: 'switch(t){case"window.titleBarStyle":return"custom";case"workbench.activityBar.location":return"default"}const s=pXe(i)?i:pXe(e)?e:void 0;return this.m.getValue(t,s)}',
-      replace: 'switch(t){case"window.titleBarStyle":return"custom"}const s=pXe(i)?i:pXe(e)?e:void 0;return this.m.getValue(t,s)}'
+      search: 'switch(t){case"window.titleBarStyle":return"custom";case"workbench.activityBar.location":return"default"}const s=TJe(i)?i:TJe(e)?e:void 0;return this._configuration.getValue(t,s)}',
+      replace: 'switch(t){case"window.titleBarStyle":return"custom"}const s=TJe(i)?i:TJe(e)?e:void 0;return this._configuration.getValue(t,s)}'
     },
 
     {
       // 扩展活动栏位置配置项，支持 top、bottom、hidden、default
       label: '扩展 activityBar.location 枚举值',
-      search: '"workbench.activityBar.location":{type:"string",enum:["default"],default:"default",markdownDescription:d(4863,null),enumDescriptions:[d(4864,null),d(4865,null),d(4866,null),d(4867,null)]}',
-      replace: '"workbench.activityBar.location":{type:"string",enum:["top","bottom","hidden","default"],default:"default",markdownDescription:d(4863,null),enumDescriptions:[d(4864,null),d(4865,null),d(4866,null),d(4867,null)]}'
+      search: '"workbench.activityBar.location":{type:"string",enum:["default"],default:"default",markdownDescription:u(4877,null),enumDescriptions:[u(4878,null),u(4879,null),u(4880,null),u(4881,null)]}',
+      replace: '"workbench.activityBar.location":{type:"string",enum:["top","bottom","hidden","default"],default:"default",markdownDescription:u(4877,null),enumDescriptions:[u(4878,null),u(4879,null),u(4880,null),u(4881,null)]}'
     },
 
     {
       // 在侧边栏创建阶段接管 top 和 bottom 模式的内嵌路径
       label: '为侧边栏创建逻辑添加 top 和 bottom 分支',
-      search: 'create(e){switch(this.q.partId){case"workbench.parts.sidebar":{if(this.C.isSoloModeOrSoloLite)return this.g.create(e);const t=document.createElement("div");this.f?.create(t),this.m.enableBuiltinCompositeBar&&e.appendChild(t);const s=document.createElement("div");s.classList.add("icube-sidebar-separator"),e.appendChild(s);const n=document.createElement("div");return n.classList.toggle("third-party"),this.g.create(n),e.appendChild(n),e}}return this.g.create(e)}',
-      replace: 'create(e){switch(this.q.partId){case"workbench.parts.sidebar":{if(this.C.isSoloModeOrSoloLite)return this.g.create(e);const t=this.q.Yc.getValue("workbench.activityBar.location");if(t==="top"||t==="bottom")return this.g.create(e);const s=document.createElement("div");this.f?.create(s),this.m.enableBuiltinCompositeBar&&e.appendChild(s);const n=document.createElement("div");n.classList.add("icube-sidebar-separator"),e.appendChild(n);const r=document.createElement("div");return r.classList.toggle("third-party"),this.g.create(r),e.appendChild(r),e}}return this.g.create(e)}'
+      search: 'create(e){switch(this.paneCompositePart.partId){case"workbench.parts.sidebar":{if(this.layoutService.isSoloModeOrSoloLite)return this.compositeBar.create(e);const t=document.createElement("div");this.builtinCompositeBar?.create(t),this.options.enableBuiltinCompositeBar&&e.appendChild(t);const s=document.createElement("div");s.classList.add("icube-sidebar-separator"),e.appendChild(s);const n=document.createElement("div");return n.classList.toggle("third-party"),this.compositeBar.create(n),e.appendChild(n),e}}return this.compositeBar.create(e)}',
+      replace: 'create(e){switch(this.paneCompositePart.partId){case"workbench.parts.sidebar":{if(this.layoutService.isSoloModeOrSoloLite)return this.compositeBar.create(e);const t=this.layoutService.configurationService.getValue("workbench.activityBar.location");if(t==="top"||t==="bottom")return this.compositeBar.create(e);const s=document.createElement("div");this.builtinCompositeBar?.create(s),this.options.enableBuiltinCompositeBar&&e.appendChild(s);const n=document.createElement("div");n.classList.add("icube-sidebar-separator"),e.appendChild(n);const r=document.createElement("div");return r.classList.toggle("third-party"),this.compositeBar.create(r),e.appendChild(r),e}}return this.compositeBar.create(e)}'
     },
 
     {
       // 调整可见活动项数量计算，为额外注入项预留位置
       label: '调整可见活动项数量计算',
-      search: 'for(let h=0;h<s.length;h++){const u=this.J.get(s[h])+6;if(o+u>a){n=h;break}o+=u}for(r>n&&(s=s.slice(0,n)),this.w.activeItem&&s.every(h=>!!this.w.activeItem&&h!==this.w.activeItem.id)&&(o+=this.J.get(this.w.activeItem.id),s.push(this.w.activeItem.id));o>a&&s.length;){',
-      replace: 'for(let h=0;h<s.length;h++){const u=this.J.get(s[h])+6;if(o+u>a){n=h;break}o+=u}if(n>0&&n<s.length)n++;for(r>n&&(s=s.slice(0,n)),this.w.activeItem&&s.every(h=>!!this.w.activeItem&&h!==this.w.activeItem.id)&&(o+=this.J.get(this.w.activeItem.id),s.push(this.w.activeItem.id));o>a&&s.length;){'
+      search: 'for(let d=0;d<s.length;d++){const h=this.compositeSizeInBar.get(s[d])+6;if(o+h>a){n=d;break}o+=h}for(r>n&&(s=s.slice(0,n)),this.model.activeItem&&s.every(d=>!!this.model.activeItem&&d!==this.model.activeItem.id)&&(o+=this.compositeSizeInBar.get(this.model.activeItem.id),s.push(this.model.activeItem.id));o>a&&s.length;){',
+      replace: 'for(let d=0;d<s.length;d++){const h=this.compositeSizeInBar.get(s[d])+6;if(o+h>a){n=d;break}o+=h}if(n>0&&n<s.length)n++;for(r>n&&(s=s.slice(0,n)),this.model.activeItem&&s.every(d=>!!this.model.activeItem&&d!==this.model.activeItem.id)&&(o+=this.compositeSizeInBar.get(this.model.activeItem.id),s.push(this.model.activeItem.id));o>a&&s.length;){'
     },
 
     {
       // 在 SOLO 恢复到 IDE 时按运行时值恢复活动栏显隐状态
       label: '从 SOLO 恢复到 IDE 时恢复活动栏运行时显隐状态',
-      search: 'this.workbenchGrid.setViewVisible(this.J,!1),this.nc(!1),this.workbenchGrid.removeView(this.Q),',
-      replace: 'this.workbenchGrid.setViewVisible(this.J,!1),this.nc(this.zb.getRuntimeValue(Zt.ACTIVITYBAR_HIDDEN,!0)),this.workbenchGrid.removeView(this.Q),'
+      search: 'this.stateModel.getRuntimeValue(ei.ACTIVITYBAR_HIDDEN,!0)||this.setActivityBarHidden(!1)',
+      replace: 'this.setActivityBarHidden(this.stateModel.getRuntimeValue(ei.ACTIVITYBAR_HIDDEN,!0))'
     },
 
     {
       // 扣减 header 和 footer 高度，修复侧边栏内容区域布局
       label: '扣减 header 和 footer 高度',
-      search: 'const c=new $i(o-(this.e.horizontalPadding??0)*2,a-s.height-(this.e.verticalPadding??0)*2);',
-      replace: 'const c=new $i(o-(this.e.horizontalPadding??0)*2,a-s.height-n.height-r.height-(this.e.verticalPadding??0)*2);'
+      search: 'const l=new Oi(o-(this.options.horizontalPadding??0)*2,a-s.height-(this.options.verticalPadding??0)*2);',
+      replace: 'const l=new Oi(o-(this.options.horizontalPadding??0)*2,a-s.height-n.height-r.height-(this.options.verticalPadding??0)*2);'
     }
 
   ],

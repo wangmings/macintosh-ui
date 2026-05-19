@@ -11,6 +11,19 @@ app_name="Trae CN"
 app_dir="/Applications/${app_name}.app/Contents/Resources/app"
 main_file="${app_dir}/out/main.js"
 workbench_dir="${app_dir}/out/vs/workbench"
+echo "应用名称: ${app_name}"
+
+# 避免无法正确的格式化，所以需要切换到项目目录
+cd "$base_dir"
+
+
+# 检查是否安装了prettier
+if command -v prettier &> /dev/null; then
+	exist_prettier=true
+else
+	exist_prettier=false
+	echo "prettier 未安装, 无法格式化"
+fi
 
 
 
@@ -23,9 +36,14 @@ fi
 
 find_files+=$'\n'"${main_file}"
 
+
+
+
 # 清空项目目录
 rm -rf "$code_dir"
 mkdir -p "$source_dir"
+
+
 
 # 遍历所有文件
 while read -r file; do
@@ -43,11 +61,13 @@ while read -r file; do
 
 	# 格式化js文件
 	if [[ "$source_file" == *".js" ]]; then
-		echo "正在格式化文件: ${fileName}"
-		prettier --cache "$source_file" >"${code_file}.txt" && {
-			mv $source_file "${source_file}.txt"
-		} &
-	
+		if [ "$exist_prettier" = true ]; then
+			echo "正在格式化文件: ${fileName}"
+			prettier --cache "$source_file" >"${code_file}.txt" && {
+				mv $source_file "${source_file}.txt"
+			}&
+		fi
+		
 	else
 		# 重新命名文件
 		mv $source_file "${source_file}.txt"	
@@ -57,6 +77,8 @@ while read -r file; do
 done <<<"$find_files"
 
 
-wait
+if [ "$exist_prettier" = true ]; then
+	wait
+	echo "✅ 所有文件格式化完成"
+fi
 
-echo "✅ 所有文件格式化完成"
