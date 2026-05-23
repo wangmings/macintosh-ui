@@ -8,11 +8,21 @@ const child = require('child_process')
 
 
 // 高频VSCode API变量定义
-const homeDir = os.homedir()
-const appRoot = vscode.env.appRoot
 const execCommand = vscode.commands.executeCommand
 const showMessage = vscode.window.showInformationMessage
 
+
+
+/**
+ * 获取插件运行时基础路径（同步 ✅）
+ * @returns {{homeDir: string, appRoot: string}} 包含用户主目录和VSCode应用根目录的对象
+ */
+function getPaths() {
+  return {
+    homeDir: os.homedir(),
+    appRoot: vscode.env.appRoot,
+  }
+}
 
 
 /**
@@ -245,74 +255,13 @@ async function readWriteBackupFile(isBackup, targetFile, callback) {
 
 
 
-
-
-// 获取当前语言的消息
-function getMessages() {
-  const messages = {
-    // 英文
-    en_us: {
-      open: {
-        fail: 'Failed to add to workspace: %path%',
-        exist: 'Already in workspace!',
-        success: 'Added to workspace!'
-      },
-      patch: {
-        bar: 'Patch addition to the activity bar failed! The current version does not support it!',
-        glass: 'Patch addition to the frosted glass failed! The current version does not support it!'
-      },
-      theme: {
-        update: 'Theme settings updated. Restart to apply changes?',
-        clean: 'Settings cleared. Restart to clear cache?',
-        backup: 'Settings backed up to: %path%',
-        import: 'Theme settings imported successfully'
-      },
-      button: {
-        themes:{
-          restart: 'Restart Now',
-          reload: 'Reload'
-        },
-        inject:{
-          confirm: 'Yes',
-          cancel: 'No'
-        }
-      },
-      inject: 'Macintosh UI: Script not injected. Inject now?'
-    },
-
-
-    // 中文
-    zh_cn: {
-      open: {
-        fail: '添加到工作区失败：%path%',
-        exist: '已在工作区!',
-        success: '已添加到工作区!'
-      },
-      patch: {
-        bar: '活动栏补丁添加失败！当前版本不支持！',
-        glass: '毛玻璃效果补丁添加失败！当前版本不支持！'
-      },
-      theme: {
-        update: '已更新主题配置，是否重启以生效？',
-        clean: '已清除配置，是否重启清理缓存？',
-        backup: '已备份配置：%path%',
-        import: '已导入主题配置'
-      },
-      button: {
-        themes:{
-          restart: '立即重启',
-          reload: '重新加载'
-        },
-        inject:{
-          confirm: '确认',
-          cancel: '取消'
-        }
-      },
-      inject: '麦金塔界面：脚本未注入，是否注入脚本？'
-    }
-  }
-  const locale = vscode.env.language.toLowerCase()
-  return locale.startsWith('zh') ? messages.zh_cn : messages.en_us
+/**
+ * 获取当前语言
+ * @returns {{language: string, locale: string}} 当前语言，'zh' 或 'en'
+ */
+function getLanguage() {
+  const language = vscode.env.language
+  return {language, locale: language.split('-')[0]}
 }
 
 
@@ -324,10 +273,9 @@ function getMessages() {
 
 
 module.exports = {
-  homeDir,
-  appRoot,
   exists,
-  getMessages,
+  getPaths,
+  getLanguage,
   showMessage,
   execCommand,
   registerCmd,

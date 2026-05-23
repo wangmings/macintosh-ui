@@ -1,4 +1,4 @@
-const { windowBlur, activityBar } = require('./apps/patch.config.js')
+const { window, patchs } = require('./config/patchs.js')
 
 
 
@@ -33,22 +33,24 @@ function getAllMatches(text, pattern) {
  * @param {string} text - 目标源码文本
  * @returns {{data: string, status: { fail: string[], success: string[] }}} - 包含应用补丁后的文本和失败补丁列表的对象
  */
-function traeActivityBar(type, text) {
-  const status = {fail: [], success: []}
+function activityBar(type, text) {
+  const status = { fail: [], success: []}
   if (type === '.js') {
-    for (const patch of activityBar.patch) {
+    for (const patch of patchs.activityBar) {
       const matches = getAllMatches(text, patch.search)
       if (matches.length == 1) {
         text = text.replace(patch.search, patch.replace)
+        // @ts-ignore
         status.success.push(patch.label)
-      }else{
+      } else {
+        // @ts-ignore
         status.fail.push(patch.label)
       }
     }
   } else if (type === '.css') {
-    text = `${text}\n${activityBar.style}`
+    text = `${text}\n${patchs.activityBarStyle}`
   }
-  return {data: text, status}
+  return { data: text, status }
 }
 
 
@@ -61,17 +63,19 @@ function traeActivityBar(type, text) {
  * @returns {{data: string, status: { fail: string[], success: string[] }}} - 包含应用补丁后的文本和失败补丁列表的对象
  */
 function frostedGlass(text) {
-  const status = { fail: [], success: []}
-  for (const patch of windowBlur.patch) {
+  const status = { fail: [], success: [] }
+  for (const patch of patchs.frostedGlass) {
     const matches = getAllMatches(text, patch.search)
     if (matches.length == 1) {
       text = text.replace(patch.search, patch.replace)
+      // @ts-ignore
       status.success.push(patch.label)
-    }else{
+    } else {
+      // @ts-ignore
       status.fail.push(patch.label)
     }
   }
-  return {data: text, status}
+  return { data: text, status }
 }
 
 
@@ -81,7 +85,7 @@ function frostedGlass(text) {
 
 
 module.exports = {
-  windowBlur,
-  traeActivityBar,
+  window,
+  activityBar,
   frostedGlass
 }

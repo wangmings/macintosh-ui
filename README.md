@@ -4,15 +4,14 @@
 
 ## 当前功能
 
-- 内置 12 套主题，包含深色与浅色方案
+- 内置 12 套主题，覆盖深色与浅色方案
 - 首次启动自动检测注入状态，未注入时弹窗提示
-- 通过右键菜单管理主题资源，无需手动改 VS Code 安装目录
-- 支持将扩展内的 `vscode/` 资源目录直接加入工作区，方便继续自定义
-- 支持一键注入、清理、备份主题资源
+- 通过编辑器右键菜单管理主题资源，无需手动改 VS Code 安装目录
+- 支持一键注入、更新、清理、备份主题资源
 - 支持切换界面字体与编辑器字体
-- 支持开启/关闭磨砂玻璃效果
-- 内置 Trae CN 环境兼容处理
-- 内置活动栏补丁逻辑，用于适配特定宿主环境的侧边栏布局
+- 支持开启 / 关闭磨砂玻璃效果
+- 内置 Trae CN 环境兼容处理（通知屏蔽、活动栏补丁）
+- 支持中 / 英文双语界面提示
 
 ## 内置主题
 
@@ -37,7 +36,7 @@
 ## 安装后怎么用
 
 1. 安装扩展并启动 VS Code。
-2. 第一次启动时，如果检测到脚本尚未注入，会提示是否注入主题脚本。
+2. 首次启动时，如果检测到脚本尚未注入，会弹出提示询问是否注入。
 3. 选择 `确认` 后执行注入。
 4. 根据提示选择 `重新加载` 或 `立即重启`，让修改生效。
 5. 打开 `Preferences: Color Theme`，切换到任意 `Apple ...` 主题。
@@ -55,33 +54,33 @@
 
 ### 这些命令分别做什么
 
-- `打开主题配置`：把扩展内的 [`vscode`](./vscode) 目录加入当前工作区，方便直接修改主题 JSON、注入 CSS/JS、字体资源
-- `更新主题配置`：重新注入 `vscode/assets` 中的 CSS / JS / 字体资源，并同步 `vscode/themes/json/*.json` 到 `package.json` 的主题列表
+- `打开主题配置`：把扩展内的 [`vscode`](./vscode) 目录加入当前工作区，方便直接修改主题 JSON、注入 CSS/JS 和字体资源
+- `更新主题配置`：重新注入 `vscode/assets` 中的 CSS / JS / 字体资源，并扫描 `vscode/themes/json/*.json` 同步主题列表到 `package.json`
 - `清除主题配置`：恢复被注入前的文件内容，并删除注入目录
 - `备份主题配置`：将扩展内的 [`vscode`](./vscode) 目录备份到 `~/Macintosh-UI-Backup`
-- `启用/关闭磨砂玻璃`：写入 `workbench.colorCustomizations`，切换透明与磨砂相关配置；当前实现会直接覆盖现有颜色自定义配置
+- `启用 / 关闭磨砂玻璃`：写入 `workbench.colorCustomizations`，切换透明与磨砂相关配置；当前实现会直接覆盖现有颜色自定义配置
 
-## 字体配置
+## 字体与语言配置
 
 扩展暴露了两个设置项：
 
-- `setting.ui.fontFamily`
-  默认值：`Symbols Nerd Font Mono, JetBrains Mono, TsangerJinKai02-W04`
-- `default.ui.fontFamily`
-  可选值：`-apple-system`、`SF Pro Text`
+- `setting.ui.fontFamily`：自定义界面字体栈，默认值为 `Symbols Nerd Font Mono, JetBrains Mono, TsangerJinKai02-W04`
+- `default.ui.fontFamily`：系统默认字体，可选 `-apple-system` 或 `SF Pro Text`
 
-当你修改这些设置后，需要再次执行 `更新主题配置`，然后重载窗口或重启 VS Code，字体替换才会真正写入工作台文件。
+修改设置后需要执行 `更新主题配置`，然后重载窗口或重启 VS Code，字体替换才会真正写入工作台文件。
+
+扩展会根据 VS Code 当前显示语言自动切换中文或英文提示文案，语言包位于 [`src/locales/i18n/`](./src/locales/i18n)。
 
 ## 磨砂玻璃与注入说明
 
-这个项目的视觉效果并不完全依赖 VS Code 官方主题能力，而是通过注入方式实现额外 UI 定制，因此有几个特点需要提前说明：
+这个项目的视觉效果并不完全依赖 VS Code 官方主题能力，而是通过注入方式实现额外 UI 定制：
 
 - 会修改 VS Code 或宿主编辑器安装目录中的工作台文件
 - 注入时会为目标文件生成 `.bak` 备份
 - 清除主题配置时会基于备份恢复原文件
 - 某些宿主环境可能在升级后导致补丁片段失效，需要重新适配
 
-如果你使用的是 Trae CN，项目里还包含专门的通知处理和活动栏补丁逻辑。
+如果你使用的是 Trae CN，扩展会自动处理特定通知弹窗，并应用活动栏布局补丁。
 
 ## 项目结构
 
@@ -91,17 +90,26 @@ macintosh-ui/
 ├── package.json            # 扩展清单、命令注册、主题注册入口
 ├── src/                    # 扩展运行逻辑
 │   ├── extension.js        # 扩展入口，注册命令与执行注入流程
-│   └── utils.js            # 文件读写、备份、重启、配置读写等工具
+│   ├── utils.js            # 文件读写、备份、重启、配置读写等工具
+│   └── locales/            # 国际化文本
+│       ├── il8n.js         # 语言切换模块
+│       └── i18n/           # 中文 / 英文文案
 ├── vscode/                 # 注入资源与主题系统
 │   ├── assets/             # 运行时注入资源：CSS、JS、字体文件
 │   ├── patchs/             # 源码补丁模块：窗口效果、活动栏逻辑等
+│   │   ├── apps/           # 补丁目标源码、辅助脚本和提示词
+│   │   ├── config/         # 补丁规则与窗口参数配置
+│   │   └── patch.js        # 补丁执行入口
 │   ├── themes/             # 主题系统：主题数据、生成脚本、开发文档
-│   └── README.md           # vscode 子目录说明文档
-├── icon/                   # 扩展图标资源目录
-├── package.nls.json        # 默认语言文案
+│   │   ├── theme.js        # 扫描主题 JSON 并同步到 package.json
+│   │   ├── docs/           # 主题开发参考文档
+│   │   └── json/           # 12 套主题定义文件
+│   └── README.md           # vscode 子目录详细说明
+├── icon/                   # 扩展图标资源
+├── package.nls.json        # 默认语言文案（命令标题）
 ├── package.nls.zh-cn.json  # 中文文案
 ├── CHANGELOG.md            # 更新记录
-├── FLOW.md                 # 项目流程/设计补充说明
+├── FLOW.md                 # 项目流程与模块关系说明
 ├── LICENSE.md              # 许可证
 └── jsconfig.json           # JS 项目配置
 ```
@@ -125,7 +133,9 @@ pnpm run test
 
 ### 主题开发
 
-主题文件位于 [`vscode/themes`](./vscode/themes)。执行 `更新主题配置` 时，扩展会通过 [`vscode/themes/main.js`](./vscode/themes/main.js) 扫描这个目录下的 `.json` 文件，并自动刷新 `package.json` 中的 `contributes.themes`。
+主题文件位于 [`vscode/themes/json/`](./vscode/themes/json)。执行 `更新主题配置` 时，扩展会通过 [`vscode/themes/theme.js`](./vscode/themes/theme.js) 扫描该目录下的 `.json` 文件，并自动刷新 `package.json` 中的 `contributes.themes`。
+
+每个主题 JSON 文件通过 `name` 和 `type` 字段定义显示名称和深浅色类型，最终会生成 `Apple ${name}` 格式的标签。
 
 如果你要调整语法高亮作用域，可以参考：
 
@@ -136,7 +146,7 @@ pnpm run test
 ## 兼容性
 
 - VS Code engine：`^1.87.0`
-- 主要面向桌面版 VS Code / 基于 VS Code 的桌面宿主环境
+- 主要面向桌面版 VS Code 及基于 VS Code 的桌面宿主环境（含 Trae CN）
 
 ## 仓库信息
 

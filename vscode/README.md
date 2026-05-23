@@ -13,12 +13,16 @@ vscode/
 │   ├── index.css         # 编辑器界面样式覆盖
 │   └── index.js          # 浏览器端 UI 监听与修复脚本
 ├── patchs/               # 源码补丁模块：窗口效果、活动栏逻辑等
-│   ├── apps/             # 补丁配置与辅助脚本
-│   │   ├── appCode.sh    # 宿主源码辅助脚本
-│   │   └── patch.config.js # 补丁规则与参数配置
-│   └── main.js           # 补丁执行与替换工具
+│   ├── apps/             # 补丁目标源码、辅助脚本和提示词
+│   │   ├── code/         # 待匹配的压缩 / 格式化源码参考文件
+│   │   ├── prompt/       # 补丁生成与修复提示词
+│   │   └── code.sh       # 宿主源码辅助脚本
+│   ├── config/           # 补丁规则与窗口参数配置
+│   │   ├── patchs.js     # 补丁规则配置
+│   │   └── window.js     # 窗口玻璃效果参数
+│   └── patch.js          # 补丁执行与替换工具
 └── themes/               # 主题系统：主题数据、生成脚本、开发文档
-    ├── main.js           # 扫描主题并生成 themes 注册配置
+    ├── theme.js          # 扫描主题并生成 themes 注册配置
     ├── docs/             # 主题开发参考文档
     │   ├── scope.md      # Token / Scope 检查说明
     │   └── theme.md      # 主题颜色配置说明
@@ -84,16 +88,16 @@ vscode/
 
 这一层负责对 VS Code / Trae CN 产物进行源码级补丁处理。
 
-#### `patchs/main.js`
+#### `patchs/patch.js`
 
 补丁执行辅助模块，主要职责：
 
 - 提供 `getAllMatches()` 统一处理字符串和正则匹配，并统计补丁命中数量。
-- 导出 `traeActivityBar()`，用于给活动栏相关 JS/CSS 代码打补丁。
+- 导出 `activityBar()`，用于给活动栏相关 JS/CSS 代码打补丁。
 - 导出 `frostedGlass()`，用于给窗口模糊和玻璃效果相关代码打补丁。
-- 统一作为 `patchs/apps/patch.config.js` 中补丁配置的执行入口。
+- 统一作为 `patchs/config/patchs.js` 中补丁配置的执行入口。
 
-#### `patchs/apps/patch.config.js`
+#### `patchs/config/patchs.js`
 
 补丁配置中心，定义了两大类能力：
 
@@ -103,16 +107,39 @@ vscode/
   - 为 `top`、`bottom` 等布局模式补上逻辑分支。
   - 调整活动项数量计算与布局细节。
   - 附带一段活动栏样式补丁 CSS。
-- `windowBlur`
-  - 定义窗口玻璃效果参数，例如 `frame`、`transparent`、`vibrancy`、`backgroundMaterial`、`backgroundColor`。
-  - 提供一组 `workbenchCustomColors`，用于配合透明和模糊背景调整编辑器、侧边栏、状态栏、面板等颜色。
-  - 生成对应的 `windowBlur.patch` 替换规则，注入到目标源码中。
+- `frostedGlass`
+  - 读取 `patchs/config/window.js` 中的窗口玻璃效果参数，例如 `frame`、`transparent`、`vibrancy`、`backgroundMaterial`、`backgroundColor`。
+  - 注入窗口玻璃效果配置，并替换目标源码中的背景色设置。
+
+#### `patchs/config/window.js`
+
+窗口玻璃效果参数配置，主要包含：
+
+- `frostedGlass`：窗口透明、毛玻璃、背景材质和背景色等参数。
+- `workbenchCustomColors`：配合透明和模糊背景调整编辑器、侧边栏、状态栏、面板等颜色。
+
+#### `patchs/apps/code.sh`
+
+宿主源码辅助脚本，用于定位并复制 Trae CN 应用里的目标源码文件，方便后续补丁匹配和调试。
+
+#### `patchs/apps/code/`
+
+补丁匹配参考源码目录，主要保存压缩源码、格式化源码和 CSS 文件，例如：
+
+- `workbench.desktop.main.js`：活动栏补丁的原版压缩源码匹配基准。
+- `workbench.desktop.main.fmt.js`：格式化后的辅助定位参考。
+- `workbench.desktop.main.css`：活动栏样式补丁的目标 CSS 参考。
+- `main.js` / `main.fmt.js`：主进程相关源码参考。
+
+#### `patchs/apps/prompt/`
+
+补丁提示词目录，用于保存活动栏实现和补丁失效修复的操作提示。
 
 ### `themes/`
 
 这一层负责主题文件维护、主题配置生成和主题开发说明文档。
 
-#### `themes/main.js`
+#### `themes/theme.js`
 
 主题构建辅助脚本，主要职责：
 
@@ -141,7 +168,7 @@ vscode/
 
 #### `themes/json/`
 
-主题定义目录，每个 JSON 文件都是一个可被 `themes/main.js` 扫描并注册的 VS Code 主题：
+主题定义目录，每个 JSON 文件都是一个可被 `themes/theme.js` 扫描并注册的 VS Code 主题：
 
 - `dark-agola.json`：深色主题，偏 Zed Agola 风格，包含较完整的 `tokenColors` 和部分 `semanticTokenColors` 定义。
 - `dark-deep-i.json`：深色主题，偏深灰蓝风格，重点定义 UI `colors`，适合整体界面外观调整。
@@ -163,6 +190,6 @@ vscode/
 - `assets/` 负责运行时样式和字体注入。
 - `patchs/` 负责对目标应用源码进行补丁替换。
 - `themes/` 负责主题 JSON 维护和主题注册生成。
-- `themes/main.js` 会读取 `themes/json/*.json`。
+- `themes/theme.js` 会读取 `themes/json/*.json`。
 - `assets/fonts.css` 会读取 `assets/fonts/*` 字体文件。
-- `patchs/main.js` 会读取并执行 `patchs/apps/patch.config.js` 中的补丁配置。
+- `patchs/patch.js` 会读取并执行 `patchs/config/patchs.js` 中的补丁配置。

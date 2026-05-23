@@ -2,7 +2,7 @@
 
 base_dir="$(cd "$(dirname "$0")" && pwd)"
 code_dir="${base_dir}/code"
-source_dir="${code_dir}/source"
+
 
 app_name="Trae CN"
 # [[ "$base_dir" == *".trae-cn" ]] && app_name="Trae CN"
@@ -19,9 +19,9 @@ cd "$base_dir"
 
 # 检查是否安装了prettier
 if command -v prettier &> /dev/null; then
-	exist_prettier=true
+	is_prettier=true
 else
-	exist_prettier=false
+	is_prettier=false
 	echo "prettier 未安装, 无法格式化"
 fi
 
@@ -38,46 +38,41 @@ find_files+=$'\n'"${main_file}"
 
 
 
-
 # 清空项目目录
 rm -rf "$code_dir"
-mkdir -p "$source_dir"
+mkdir -p "$code_dir"
 
 
 
 # 遍历所有文件
 while read -r file; do
-	
 	bak_file="${file}.bak"
 	fileName=$(basename "$file")
+	name="${fileName%.*}"
+	ext="${fileName##*.}"
+	fmt_file="${code_dir}/${name}.fmt.${ext}"
 	code_file="${code_dir}/${fileName}"
-	source_file="${source_dir}/${fileName}"
 
 	# 备份文件不存在时，备份目标源文件
 	[ ! -f "$bak_file" ] && cp -f "$file" "$bak_file"
 
 	# 拷贝备份文件到项目目录
-	cp -f "$bak_file" "${source_file}"
+	cp -f "$bak_file" "${code_file}"
 
 	# 格式化js文件
-	if [[ "$source_file" == *".js" ]]; then
-		if [ "$exist_prettier" = true ]; then
+	if [[ "$ext" == "js" ]]; then
+		if [ "$is_prettier" = true ]; then
 			echo "正在格式化文件: ${fileName}"
-			prettier --cache "$source_file" >"${code_file}.txt" && {
-				mv $source_file "${source_file}.txt"
-			}&
+			prettier --cache "$code_file" > "$fmt_file" &
 		fi
 		
-	else
-		# 重新命名文件
-		mv $source_file "${source_file}.txt"	
 	fi
 
 
 done <<<"$find_files"
 
 
-if [ "$exist_prettier" = true ]; then
+if [ "$is_prettier" = true ]; then
 	wait
 	echo "✅ 所有文件格式化完成"
 fi

@@ -1,7 +1,7 @@
 # 活动栏补丁提示词（顺序化执行版）
 
 ## 角色
-你是源码补丁助手。目标是在 `vscode/patchs/apps/code/workbench.desktop.main.js.txt` 里实现最小化注入改动。
+你是源码补丁助手。目标是在 `vscode/patchs/apps/code/workbench.desktop.main.fmt..js` 里实现最小化注入改动。
 
 ## 补丁功能
 1. 让 `workbench.activityBar.location` 真正支持 `top / bottom / hidden / default`
