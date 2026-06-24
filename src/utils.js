@@ -149,10 +149,10 @@ function addWorkspace(folder) {
 
 
 /**
- * 重启 VS Code 应用（异步 ✅）
+ * 重启应用（异步 ✅）
  * @param {string} execFile - 可执行文件路径
  */
-async function restartVScodeApp(execFile) {
+async function restartApps(execFile) {
   const execCmd = {
     shell: '/bin/bash',
     args: ['-c', `sleep 2; "${execFile}"`]
@@ -230,20 +230,21 @@ async function deleteFolder(path) {
 
 
 /**
- * 读写备份文件（异步 ✅）
+ * 安全修改文件（异步 ✅）
  * @param {boolean} isBackup - 是否备份并写入文件
  * @param {string} targetFile - 目标文件路径
  * @param {function} callback - 文件内容修改回调函数，返回修改后字符串
  */
-async function readWriteBackupFile(isBackup, targetFile, callback) {
+async function safeModifyFile(isBackup, targetFile, callback) {
   const bakFile = `${targetFile}.bak`
   const hasBak = await exists(bakFile)
 
   if (isBackup) {
     if (!hasBak) await fs.copyFile(targetFile, bakFile)
-    const content = await callback(await fs.readFile(bakFile, 'utf8'))
-    if (typeof content === 'string' && content.trim().length > 0) {
-      await fs.writeFile(targetFile, content, 'utf8')
+    const content = await fs.readFile(bakFile, 'utf8')
+    const newContent = await callback(content)
+    if (typeof newContent === 'string' && newContent.trim().length > 0) {
+      await fs.writeFile(targetFile, newContent, 'utf8')
     }
   } else if (hasBak) {
     await fs.copyFile(bakFile, targetFile)
@@ -282,11 +283,11 @@ module.exports = {
   packageJSON,
   addWorkspace,
   copyFolder,
+  restartApps,
   deleteFolder,
+  safeModifyFile,
   getFolderItems,
   getVScodeFonts,
   setVScodeConfig,
   getVScodeConfig,
-  restartVScodeApp,
-  readWriteBackupFile,
 }

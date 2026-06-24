@@ -13,7 +13,7 @@ let initStatus = false
 
 // 获取当前语言的消息对象
 const { locale } = utils.getLanguage()
-const { messages, translate:t } = i18n.setLanguage(locale)
+const { messages, translate: t } = i18n.setLanguage(locale)
 
 
 
@@ -100,23 +100,23 @@ function openThemeFolder() {
 
 
 /**
- * 为VSCode添加补丁
+ * 为应用添加或移除补丁
  * @param {boolean} isAdd - 是否添加补丁
  * @returns {Promise<void>}
  */
-async function addPatchVSCode(isAdd) {
+async function addApplyPatchs(isAdd) {
   const sessions = app.desktop.sessions
   const workbench = app.desktop.workbench
   const isTrae = workbench.root.includes('Trae')
   const fonts = utils.getVScodeFonts()
   const isSetting = fonts.setting.length > 0 ? true : false
-  
+
   // 给会话添加字体补丁
   for (const file of sessions.files) {
     const filePath = path.join(sessions.root, file)
     // @ts-ignore
-    await utils.readWriteBackupFile(isAdd, filePath, async (text) => {
-      if (isSetting){
+    await utils.safeModifyFile(isAdd, filePath, async (text) => {
+      if (isSetting) {
         return text.replaceAll(fonts.default, fonts.setting)
       }
       return null
@@ -129,11 +129,11 @@ async function addPatchVSCode(isAdd) {
     const ext = path.extname(file)
     const filePath = path.join(workbench.root, file)
     // @ts-ignore
-    await utils.readWriteBackupFile(isAdd, filePath, async (text) => {
+    await utils.safeModifyFile(isAdd, filePath, async (text) => {
       if (isTrae) {
         const { data, status } = patch.activityBar(ext, text)
         if (status.fail.length > 0) {
-          console.warn('活动栏补丁失败：', status)
+          console.warn(t('message.activityBar', { err: status }))
           utils.showMessage(t('patch.activityBar'))
         } else {
           text = data
@@ -147,7 +147,7 @@ async function addPatchVSCode(isAdd) {
 
   // 给应用添加玻璃效果补丁
   // @ts-ignore
-  await utils.readWriteBackupFile(isAdd, app.inject.mainFile, async (text) => {
+  await utils.safeModifyFile(isAdd, app.inject.mainFile, async (text) => {
     const { data, status } = patch.frostedGlass(text)
     if (status.fail.length > 0) {
       console.warn(t('message.glass', { err: status }))
@@ -157,6 +157,51 @@ async function addPatchVSCode(isAdd) {
     }
     return text
   })
+
+}
+
+
+
+
+/**
+ * 注入 HTML 代码
+ * @param {string} type - 代码文件类型（'sessions' 或 'workbench'）
+ * @param {string} text - HTML 文本内容
+ * @returns {Promise<string | null>} - 注入后的 HTML 文本内容
+ */
+async function injectHtml(type, text) {
+  // @ts-ignore
+  let injected = []
+  const injectDir = app.inject.dir
+  const dirs = path.basename(injectDir)
+  const injectTag = {
+    '.js': '<script async src="{url}"></script>',
+    '.css': '<link async rel="stylesheet" href="{url}">',
+    'info': ['', '<!-- Injected by Macintosh UI -->']
+  }
+
+  if (type === 'sessions') {
+    const url = `../../${dirs}/fonts.css`
+    injected = [...injectTag['info'], injectTag['.css'].replace('{url}', url)]
+
+  } else if (type === 'workbench') {
+    const files = await utils.getFolderItems(injectDir, 'file')
+    const tags = files.map(file => {
+      const ext = path.extname(file)
+      const url = `../../../${dirs}/${file}`
+      // @ts-ignore
+      return injectTag[ext].replace('{url}', url)
+    })
+    injected = [...injectTag['info'], ...tags]
+  
+  } else {
+    return null
+  }
+
+  // @ts-ignore
+  injected = injected.join('\n\t\t') + '\n\t</head>'
+  // @ts-ignore
+  return text.replaceAll('</head>', injected)
 
 }
 
@@ -175,69 +220,44 @@ async function applyThemeConfig(isAdd) {
   const injectDir = app.inject.dir
   const sessionsHtml = app.inject.sessionsHtml
   const workbenchHtml = app.inject.workbenchHtml
-  
-
-
-  // 为VSCode添加补丁
-  await addPatchVSCode(isAdd)
 
   if (isAdd) {
     // 更新主题配置
-    await theme.updateThemeConfig(ext.themesDir, ext.packageFile)
+    await theme.updateThemes(ext.themesDir, ext.packageFile)
     // 复制代码文件到应用目录
     await utils.copyFolder(ext.assetsDir, injectDir)
   } else {
     // 清理应用目录
     await utils.deleteFolder(injectDir)
   }
+  
 
+  
+  // 为应用添加或移除补丁
+  await addApplyPatchs(isAdd)
 
-  const injectFiles = await utils.getFolderItems(injectDir, 'file')
-  if (injectFiles.length > 0) {
-    const dirs = path.basename(injectDir)
-    const injectArr = ['', '<!-- Injected by Macintosh UI -->']
-
-    // 应用字体配置
-    // @ts-ignore
-    await utils.readWriteBackupFile(isAdd, sessionsHtml, async (text) => {
-      const fontsUrl = `../../${dirs}/fonts.css`
-      let injected = [...injectArr, `<link async rel="stylesheet" href=${fontsUrl}>`]
-      // @ts-ignore
-      injected = injected.join('\n\t\t') + '\n\t</head>'
-      return text.replaceAll('</head>', injected)
-    })
+  // 应用字体配置
+  // @ts-ignore
+  await utils.safeModifyFile(isAdd, sessionsHtml, async (text) => {
+    return await injectHtml('sessions', text)
+  })
 
 
 
-    // 应用注入的代码文件
-    // @ts-ignore
-    await utils.readWriteBackupFile(isAdd, workbenchHtml, async (text) => {
-      const tags = injectFiles.map(file => {
-        const url = `../../../${dirs}/${file}`
-        return {
-          '.js': `<script async src=${url}></script>`,
-          '.css': `<link async rel="stylesheet" href=${url}>`
-        }[path.extname(file)] || ''
-      })
-      let injected = [...injectArr, ...tags]
-      // @ts-ignore
-      injected = injected.join('\n\t\t') + '\n\t</head>'
-      return text.replaceAll('</head>', injected)
-    })
-
-  }
-
-
-
+  // 应用注入的代码文件
+  // @ts-ignore
+  await utils.safeModifyFile(isAdd, workbenchHtml, async (text) => {
+    return await injectHtml('workbench', text)
+  })
 
 
   // 提示用户重启应用或重新加载窗口
   const restart = t('button.restart')
-  const reload = t('button.reload')
+  const cancel = t('button.cancel')
   const message = isAdd ? t('theme.update') : t('theme.clean')
-  utils.showMessage(message, reload, restart).then(opt => {
-    if (opt === restart) utils.restartVScodeApp(app.execFile)
-    else if (opt === reload) utils.execCommand('workbench.action.reloadWindow')
+  utils.showMessage(message, restart, cancel).then(opt => {
+    if (opt === restart) utils.restartApps(app.execFile)
+    // else if (opt === cancel) utils.execCommand('workbench.action.reloadWindow')
   })
 
 }
@@ -285,7 +305,7 @@ async function activate(ctx) {
 
   // 检查注入目录是否存在
   if (!await utils.exists(app.inject.dir)) {
-    const message = t('inject.message')
+    const message = t('message.inject')
     const confirm = t('button.confirm')
     const cancel = t('button.cancel')
     utils.showMessage(message, confirm, cancel).then(async (opt) => {
