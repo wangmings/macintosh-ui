@@ -1,0 +1,45 @@
+/* ======================================
+   1. JetBrains Mono - 8 变体
+   字体名: JetBrains Mono
+   ====================================== */
+@font-face { font-family:'JetBrains Mono'; src:url('../fonts/JetBrainsMono-Regular.woff2') format('woff2'); font-weight:normal; font-style:normal; font-display:swap; }
+@font-face { font-family:'JetBrains Mono'; src:url('../fonts/JetBrainsMono-Italic.woff2') format('woff2'); font-weight:normal; font-style:italic; font-display:swap; }
+@font-face { font-family:'JetBrains Mono'; src:url('../fonts/JetBrainsMono-Medium.woff2') format('woff2'); font-weight:500; font-style:normal; font-display:swap; }
+@font-face { font-family:'JetBrains Mono'; src:url('../fonts/JetBrainsMono-Medium-Italic.woff2') format('woff2'); font-weight:500; font-style:italic; font-display:swap; }
+@font-face { font-family:'JetBrains Mono'; src:url('../fonts/JetBrainsMono-Bold.woff2') format('woff2'); font-weight:bold; font-style:normal; font-display:swap; }
+@font-face { font-family:'JetBrains Mono'; src:url('../fonts/JetBrainsMono-Bold-Italic.woff2') format('woff2'); font-weight:bold; font-style:italic; font-display:swap; }
+@font-face { font-family:'JetBrains Mono'; src:url('../fonts/JetBrainsMono-ExtraBold.woff2') format('woff2'); font-weight:800; font-style:normal; font-display:swap; }
+@font-face { font-family:'JetBrains Mono'; src:url('../fonts/JetBrainsMono-ExtraBold-Italic.woff2') format('woff2'); font-weight:800; font-style:italic; font-display:swap; }
+
+/* ======================================
+   2. LXGW WenKai Mono
+   字体名: LXGW WenKai Mono
+   ====================================== */
+@font-face { font-family:'LXGW WenKai Mono'; src:url('../fonts/LXGWWenKaiMono-Regular.woff2') format('woff2'); font-weight:normal; font-style:normal; font-display:swap; }
+
+/* ======================================
+   3. 仓耳今楷
+   字体名: TsangerJinKai02-W04
+   ====================================== */
+@font-face { font-family:'TsangerJinKai02-W04'; src:url('../fonts/TsangerJinKai02-W04.woff2') format('woff2'); font-weight:normal; font-style:normal; font-display:swap; }
+
+/* ======================================
+   4. NerdFont 图标字体
+   字体名: Symbols Nerd Font Mono
+   ====================================== */
+@font-face { font-family:'Symbols Nerd Font Mono'; src:url('../fonts/SymbolsNerdFontMono-Regular.woff2') format('woff2'); font-weight:normal; font-style:normal; font-display:swap; }
+
+/* ======================================
+   5. Zed Mono - 4 变体
+   字体名: Zed Mono
+   ====================================== */
+@font-face { font-family:'Zed Mono'; src:url('../fonts/zed-mono-extended.woff2') format('woff2'); font-weight:normal; font-style:normal; font-display:swap; }
+@font-face { font-family:'Zed Mono'; src:url('../fonts/zed-mono-extendeditalic.woff2') format('woff2'); font-weight:normal; font-style:italic; font-display:swap; }
+@font-face { font-family:'Zed Mono'; src:url('../fonts/zed-mono-extendedbold.woff2') format('woff2'); font-weight:bold; font-style:normal; font-display:swap; }
+@font-face { font-family:'Zed Mono'; src:url('../fonts/zed-mono-extendedbolditalic.woff2') format('woff2'); font-weight:bold; font-style:italic; font-display:swap; }
+
+
+/* ======================================
+   全局默认字体
+   ====================================== */
+* { font-family:'Symbols Nerd Font Mono', 'JetBrains Mono', 'TsangerJinKai02-W04', sans-serif; }

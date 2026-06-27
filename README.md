@@ -1,6 +1,6 @@
 # Macintosh UI
 
-一个偏 macOS 风格的 VS Code 主题扩展。它不只是提供配色，还会向工作台注入自定义 CSS、JS 和字体资源，用来调整界面字体、滚动条、透明背景、毛玻璃效果，以及部分宿主环境下的活动栏表现。
+一个偏 macOS 风格的 VS Code 主题扩展。它不只是提供配色，还会向工作台注入自定义 CSS、JS 和字体资源，用来调整界面字体、滚动条，以及部分宿主环境下的活动栏表现。
 
 ## 当前功能
 
@@ -9,7 +9,6 @@
 - 通过编辑器右键菜单管理主题资源，无需手动改 VS Code 安装目录
 - 支持一键注入、更新、清理、备份主题资源
 - 支持切换界面字体与编辑器字体
-- 支持开启 / 关闭磨砂玻璃效果
 - 内置 Trae CN 环境兼容处理（通知屏蔽、活动栏补丁）
 - 支持中 / 英文双语界面提示
 
@@ -45,20 +44,19 @@
 
 扩展会在编辑器右键菜单里提供 `「麦金塔界面」` 子菜单，包含这些命令：
 
-- `启用磨砂玻璃`
-- `关闭磨砂玻璃`
-- `打开主题配置`
-- `更新主题配置`
-- `清除主题配置`
-- `备份主题配置`
+- `打开配置`
+- `更新配置`
+- `清除配置`
+- `备份配置`
+- `导入配置`
 
 ### 这些命令分别做什么
 
-- `打开主题配置`：把扩展内的 [`vscode`](./vscode) 目录加入当前工作区，方便直接修改主题 JSON、注入 CSS/JS 和字体资源
-- `更新主题配置`：重新注入 `vscode/assets` 中的 CSS / JS / 字体资源，并扫描 `vscode/themes/json/*.json` 同步主题列表到 `package.json`
-- `清除主题配置`：恢复被注入前的文件内容，并删除注入目录
-- `备份主题配置`：将扩展内的 [`vscode`](./vscode) 目录备份到 `~/Macintosh-UI-Backup`
-- `启用 / 关闭磨砂玻璃`：写入 `workbench.colorCustomizations`，切换透明与磨砂相关配置；当前实现会直接覆盖现有颜色自定义配置
+- `打开配置`：把扩展内的 [`vscode`](./vscode) 目录加入当前工作区，方便直接修改主题 JSON、注入 CSS/JS 和字体资源
+- `更新配置`：通过软链接注入 `vscode/assets` 中的 CSS / JS / 字体资源，并扫描 `vscode/themes/*.json` 同步主题列表到 `package.json`
+- `清除配置`：恢复被注入前的文件内容，并删除注入软链接
+- `备份配置`：将扩展内的 [`vscode`](./vscode) 目录备份到 `~/Macintosh-UI-Backup`
+- `导入配置`：从备份目录导入主题配置
 
 ## 字体与语言配置
 
@@ -69,7 +67,7 @@
 
 修改设置后需要执行 `更新主题配置`，然后重载窗口或重启 VS Code，字体替换才会真正写入工作台文件。
 
-扩展会根据 VS Code 当前显示语言自动切换中文或英文提示文案，语言包位于 [`src/locales/i18n/`](./src/locales/i18n)。
+扩展会根据 VS Code 当前显示语言自动切换中文或英文提示文案，语言包为 [`package.nls.json`](./package.nls.json) 和 [`package.nls.zh-cn.json`](./package.nls.zh-cn.json)。
 
 ## 磨砂玻璃与注入说明
 
@@ -90,27 +88,26 @@ macintosh-ui/
 ├── package.json            # 扩展清单、命令注册、主题注册入口
 ├── src/                    # 扩展运行逻辑
 │   ├── extension.js        # 扩展入口，注册命令与执行注入流程
-│   ├── utils.js            # 文件读写、备份、重启、配置读写等工具
-│   └── locales/            # 国际化文本
-│       ├── il8n.js         # 语言切换模块
-│       └── i18n/           # 中文 / 英文文案
+│   ├── utils/              # 工具模块
+│   │   ├── index.js        # 文件读写、备份、重启、配置读写等工具
+│   │   ├── i18n.js         # 国际化语言切换模块
+│   │   ├── patch.js        # 补丁执行入口
+│   │   └── theme.js        # 扫描主题 JSON 并同步到 package.json
 ├── vscode/                 # 注入资源与主题系统
 │   ├── assets/             # 运行时注入资源：CSS、JS、字体文件
-│   ├── patchs/             # 源码补丁模块：窗口效果、活动栏逻辑等
-│   │   ├── apps/           # 补丁目标源码、辅助脚本和提示词
-│   │   ├── config/         # 补丁规则与窗口参数配置
-│   │   └── patch.js        # 补丁执行入口
-│   ├── themes/             # 主题系统：主题数据、生成脚本、开发文档
-│   │   ├── theme.js        # 扫描主题 JSON 并同步到 package.json
-│   │   ├── docs/           # 主题开发参考文档
-│   │   └── json/           # 12 套主题定义文件
+│   │   ├── css/            # 样式文件
+│   │   ├── fonts/          # 字体文件
+│   │   └── index.js        # 浏览器端 UI 脚本
+│   ├── patches/            # 源码补丁模块
+│   │   ├── activityBar.js  # 活动栏补丁配置
+│   │   └── refs/           # 源码参考与辅助脚本
+│   ├── themes/             # 12 套主题定义文件
+│   │   └── docs/           # 主题开发参考文档
 │   └── README.md           # vscode 子目录详细说明
 ├── icon/                   # 扩展图标资源
 ├── package.nls.json        # 默认语言文案（命令标题）
 ├── package.nls.zh-cn.json  # 中文文案
-├── CHANGELOG.md            # 更新记录
 ├── FLOW.md                 # 项目流程与模块关系说明
-├── LICENSE.md              # 许可证
 └── jsconfig.json           # JS 项目配置
 ```
 
@@ -133,7 +130,7 @@ pnpm run test
 
 ### 主题开发
 
-主题文件位于 [`vscode/themes/json/`](./vscode/themes/json)。执行 `更新主题配置` 时，扩展会通过 [`vscode/themes/theme.js`](./vscode/themes/theme.js) 扫描该目录下的 `.json` 文件，并自动刷新 `package.json` 中的 `contributes.themes`。
+主题文件位于 [`vscode/themes/`](./vscode/themes)。执行 `更新主题配置` 时，扩展会通过 [`src/utils/theme.js`](./src/utils/theme.js) 扫描该目录下的 `.json` 文件，并自动刷新 `package.json` 中的 `contributes.themes`。
 
 每个主题 JSON 文件通过 `name` 和 `type` 字段定义显示名称和深浅色类型，最终会生成 `Apple ${name}` 格式的标签。
 

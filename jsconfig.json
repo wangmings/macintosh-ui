@@ -2,11 +2,11 @@
   "compilerOptions": {
     "module": "Node16",
     "target": "ES2022",
-    "checkJs": true,
+    "checkJs": false,
     "lib": ["ES2022"]
   },
   "include": [
-    "src/**/*.js", "vscode/patchs/*.js"
+    "src/**/*.js", "vscode/patches/*.js"
   ],
 
   "exclude": ["node_modules", ".trae-cn", "vscode"]

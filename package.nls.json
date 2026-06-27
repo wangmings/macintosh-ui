@@ -1,12 +1,25 @@
 {
   "plugin.name": "「Macintosh UI」",
-  "menu.open.theme": "Open Theme Settings",
-  "menu.update.theme": "Update Theme Settings",
-  "menu.clean.theme": "Clear Theme Settings",
-  "menu.backup.theme": "Backup Theme Settings",
-  "menu.import.theme": "Import Theme Settings",
-  "menu.glass.enable": "Enable Frosted Glass",
-  "menu.glass.disable": "Disable Frosted Glass",
+  "menu.open.config": "▶ Open Settings",
+  "menu.update.config": "↻ Update Settings",
+  "menu.clean.config": "↺ Clear Settings",
+  "menu.backup.config": "⇧ Backup Settings",
+  "menu.import.config": "⇩ Import Settings",
   "desc.fonts.setting": "Set Editor Font",
-  "desc.fonts.default": "Default Editor Font"
+  "desc.fonts.default": "Default Editor Font",
+
+  "open.fail": "Failed to add to workspace: {file}",
+  "open.exist": "Already in workspace!",
+  "open.success": "Added to workspace!",
+  "theme.update": "Theme configuration updated, restart to take effect?", 
+  "theme.clean": "Configuration cleaned, restart to clear cache?",
+  "theme.backup": "Theme configuration backed up: {file}",
+  "theme.import": "Theme configuration imported",
+  "button.restart": "Restart Now",
+  "button.reload": "Reload",
+  "button.confirm": "Yes",
+  "button.cancel": "No",
+  "patch.activityBar": "Failed to add activity bar patch! Current version is not supported!",
+  "message.inject": "Macintosh UI: Script not injected, inject script?",
+  "message.activityBar": "Activity bar patch failed: {err}"
 }

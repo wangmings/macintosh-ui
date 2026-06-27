@@ -1,12 +1,25 @@
 {
     "plugin.name": "「麦金塔界面」",
-    "menu.open.theme": "打开主题配置",
-    "menu.update.theme": "更新主题配置",
-    "menu.clean.theme": "清除主题配置",
-    "menu.backup.theme": "备份主题配置",
-    "menu.import.theme": "导入主题配置",
-    "menu.glass.enable": "启用磨砂玻璃",
-    "menu.glass.disable": "关闭磨砂玻璃",
+    "menu.open.config": "▶ 打开配置",
+    "menu.update.config": "↻ 更新配置",
+    "menu.clean.config": "↺ 清除配置",
+    "menu.backup.config": "⇧ 备份配置",
+    "menu.import.config": "⇩ 导入配置",
     "desc.fonts.setting": "设置编辑器字体",
-    "desc.fonts.default": "默认编辑器字体"
+    "desc.fonts.default": "默认编辑器字体",
+
+    "open.fail": "添加到工作区失败： {file}",
+    "open.exist": "已在工作区!",  
+    "open.success": "已添加到工作区!",
+    "theme.update": "已更新主题配置，是否重启以生效？", 
+    "theme.clean": "已清除配置，是否重启清理缓存？",
+    "theme.backup": "已备份配置： {file}",
+    "theme.import": "已导入主题配置",
+    "button.restart": "立即重启",
+    "button.reload": "重新加载",
+    "button.confirm": "确认",
+    "button.cancel": "取消",
+    "message.inject": "麦金塔界面：脚本未注入，是否注入脚本？",
+    "patch.activityBar": "活动栏补丁添加失败！当前版本不支持！",  
+    "message.activityBar": "活动栏补丁失败: {err}"
 }

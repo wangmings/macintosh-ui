@@ -5,7 +5,7 @@
   "author": "Wang Ming",
   "publisher": "Jake",
   "icon": "icon/logo.png",
-  "version": "3.0.0",
+  "version": "3.5.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/wangmings/macintosh-ui.git"
@@ -43,33 +43,28 @@
     },
     "commands": [
       {
-        "title": "%menu.open.theme%",
-        "command": "menu.open.theme",
+        "title": "%menu.open.config%",
+        "command": "menu.open.config",
         "category": "macintosh-ui"
       },
       {
-        "title": "%menu.update.theme%",
-        "command": "menu.update.theme",
+        "title": "%menu.update.config%",
+        "command": "menu.update.config",
         "category": "macintosh-ui"
       },
       {
-        "title": "%menu.clean.theme%",
-        "command": "menu.clean.theme",
+        "title": "%menu.clean.config%",
+        "command": "menu.clean.config",
         "category": "macintosh-ui"
       },
       {
-        "title": "%menu.backup.theme%",
-        "command": "menu.backup.theme",
+        "title": "%menu.backup.config%",
+        "command": "menu.backup.config",
         "category": "macintosh-ui"
       },
       {
-        "title": "%menu.glass.enable%",
-        "command": "menu.glass.enable",
-        "category": "macintosh-ui"
-      },
-      {
-        "title": "%menu.glass.disable%",
-        "command": "menu.glass.disable",
+        "title": "%menu.import.config%",
+        "command": "menu.import.config",
         "category": "macintosh-ui"
       }
     ],
@@ -88,27 +83,19 @@
       ],
       "submenus-list": [
         {
-          "command": "menu.glass.enable",
-          "group": "1_effect@1"
-        },
-        {
-          "command": "menu.glass.disable",
-          "group": "1_effect@2"
-        },
-        {
-          "command": "menu.open.theme",
+          "command": "menu.open.config",
           "group": "2_theme@1"
         },
         {
-          "command": "menu.update.theme",
+          "command": "menu.update.config",
           "group": "2_theme@2"
         },
         {
-          "command": "menu.clean.theme",
+          "command": "menu.clean.config",
           "group": "2_theme@3"
         },
         {
-          "command": "menu.backup.theme",
+          "command": "menu.backup.config",
           "group": "2_theme@4"
         }
       ]
@@ -117,62 +104,62 @@
       {
         "label": "Apple Zed Agola",
         "uiTheme": "vs-dark",
-        "path": "vscode/themes/json/dark-agola.json"
+        "path": "vscode/themes/dark-agola.json"
       },
       {
         "label": "Apple Deep I",
         "uiTheme": "vs-dark",
-        "path": "vscode/themes/json/dark-deep-i.json"
+        "path": "vscode/themes/dark-deep-i.json"
       },
       {
         "label": "Apple Deep II",
         "uiTheme": "vs-dark",
-        "path": "vscode/themes/json/dark-deep-ii.json"
+        "path": "vscode/themes/dark-deep-ii.json"
       },
       {
         "label": "Apple Deep III",
         "uiTheme": "vs-dark",
-        "path": "vscode/themes/json/dark-deep-iii.json"
+        "path": "vscode/themes/dark-deep-iii.json"
       },
       {
         "label": "Apple Deep IV",
         "uiTheme": "vs-dark",
-        "path": "vscode/themes/json/dark-deep-iv.json"
+        "path": "vscode/themes/dark-deep-iv.json"
       },
       {
         "label": "Apple GitHub Dark",
         "uiTheme": "vs-dark",
-        "path": "vscode/themes/json/dark-github.json"
+        "path": "vscode/themes/dark-github.json"
       },
       {
         "label": "Apple Material Dark",
         "uiTheme": "vs-dark",
-        "path": "vscode/themes/json/dark-material.json"
+        "path": "vscode/themes/dark-material.json"
       },
       {
         "label": "Apple One Dark Pro",
         "uiTheme": "vs-dark",
-        "path": "vscode/themes/json/dark-one.json"
+        "path": "vscode/themes/dark-one.json"
       },
       {
         "label": "Apple Zed Andromeda",
         "uiTheme": "vs-dark",
-        "path": "vscode/themes/json/dark-zed.json"
+        "path": "vscode/themes/dark-zed.json"
       },
       {
         "label": "Apple Boxy Yesterday",
         "uiTheme": "vs",
-        "path": "vscode/themes/json/light-boxy.json"
+        "path": "vscode/themes/light-boxy.json"
       },
       {
         "label": "Apple Zed Italic",
         "uiTheme": "vs",
-        "path": "vscode/themes/json/light-italic.json"
+        "path": "vscode/themes/light-italic.json"
       },
       {
         "label": "Apple Quiet VSC",
         "uiTheme": "vs",
-        "path": "vscode/themes/json/light-quiet.json"
+        "path": "vscode/themes/light-quiet.json"
       }
     ]
   },

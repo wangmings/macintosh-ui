@@ -4,7 +4,7 @@
 .git
 .gitignore
 .yarnrc
-vscode/patchs/apps/code
+vscode/patches/*/sources
 vsc-extension-quickstart.md
 **/.DS_Store
 **/jsconfig.json
