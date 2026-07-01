@@ -5,15 +5,15 @@ const activityBar = [
   {
     // 修复底层配置读取被硬编码为 default 的问题
     label: '移除 activityBar.location 的硬编码',
-    search: 'switch(t){case"window.titleBarStyle":return"custom";case"workbench.activityBar.location":return"default"}const s=TJe(i)?i:TJe(e)?e:void 0;return this._configuration.getValue(t,s)}',
-    replace: 'switch(t){case"window.titleBarStyle":return"custom"}const s=TJe(i)?i:TJe(e)?e:void 0;return this._configuration.getValue(t,s)}'
+    search: 'switch(t){case"window.titleBarStyle":return"custom";case"workbench.activityBar.location":return"default"}const s=cXe(i)?i:cXe(e)?e:void 0;return this._configuration.getValue(t,s)}',
+    replace: 'switch(t){case"window.titleBarStyle":return"custom"}const s=cXe(i)?i:cXe(e)?e:void 0;return this._configuration.getValue(t,s)}'
   },
 
   {
     // 扩展活动栏位置配置项，支持 top、bottom、hidden、default
     label: '扩展 activityBar.location 枚举值',
-    search: '"workbench.activityBar.location":{type:"string",enum:["default"],default:"default",markdownDescription:u(4877,null),enumDescriptions:[u(4878,null),u(4879,null),u(4880,null),u(4881,null)]}',
-    replace: '"workbench.activityBar.location":{type:"string",enum:["top","bottom","hidden","default"],default:"default",markdownDescription:u(4877,null),enumDescriptions:[u(4878,null),u(4879,null),u(4880,null),u(4881,null)]}'
+    search: '"workbench.activityBar.location":{type:"string",enum:["default"],default:"default",markdownDescription:u(4885,null),enumDescriptions:[u(4886,null),u(4887,null),u(4888,null),u(4889,null)]}',
+    replace: '"workbench.activityBar.location":{type:"string",enum:["top","bottom","hidden","default"],default:"default",markdownDescription:u(4885,null),enumDescriptions:[u(4886,null),u(4887,null),u(4888,null),u(4889,null)]}'
   },
 
   {

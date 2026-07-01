@@ -6,13 +6,13 @@ const fs = require('fs/promises')
 
 
 /**
- * 更新应用主题配置
+ * 同步应用主题配置
  * @param {string} themeDir - 主题目录
  * @param {string} pkgFile - package.json 配置文件
  * @param {boolean} debug - 是否开启调试模式
  * @returns {Promise<string>} - 更新后的主题配置字符串
  */
-async function updateThemes(themeDir, pkgFile, debug = false) {
+async function syncThemes(themeDir, pkgFile, debug = false) {
   const themes = []
   const sp = os.platform() === 'win32' ? '\\' : '/'
   const dir = themeDir.split(sp).slice(-2).join('/')
@@ -63,7 +63,7 @@ async function test() {
   const pkgFile = path.join(path.dirname(baseDir), 'package.json')
  
   console.log('===== 测试更新主题配置 =====')
-  const themes = await updateThemes(themesDir, pkgFile, true)
+  const themes = await syncThemes(themesDir, pkgFile, true)
   if (themes.trim().length === 0) console.error('未找到有效主题配置')
   console.log(themes)
   
@@ -78,4 +78,4 @@ async function test() {
 // 测试更新主题配置
 if (require.main === module) test()
 
-module.exports = { updateThemes }
+module.exports = { syncThemes }

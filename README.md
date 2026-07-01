@@ -88,18 +88,21 @@ macintosh-ui/
 ├── package.json            # 扩展清单、命令注册、主题注册入口
 ├── src/                    # 扩展运行逻辑
 │   ├── extension.js        # 扩展入口，注册命令与执行注入流程
-│   ├── utils/              # 工具模块
-│   │   ├── index.js        # 文件读写、备份、重启、配置读写等工具
-│   │   ├── i18n.js         # 国际化语言切换模块
-│   │   ├── patch.js        # 补丁执行入口
-│   │   └── theme.js        # 扫描主题 JSON 并同步到 package.json
+│   └── lib/                # 工具模块
+│       ├── utils.js        # 文件读写、备份、重启、配置读写等工具
+│       ├── i18n.js         # 国际化语言切换模块
+│       ├── patch.js        # 补丁执行入口
+│       └── theme.js        # 扫描主题 JSON 并同步到 package.json
 ├── vscode/                 # 注入资源与主题系统
 │   ├── assets/             # 运行时注入资源：CSS、JS、字体文件
 │   │   ├── css/            # 样式文件
+│   │   │   ├── fonts.css   # 字体注册与全局字体栈配置
+│   │   │   └── style.css   # 编辑器界面样式覆盖
 │   │   ├── fonts/          # 字体文件
-│   │   └── index.js        # 浏览器端 UI 脚本
+│   │   ├── fixes.js        # 浏览器端 UI 修复脚本
+│   │   └── utils.js        # 浏览器端 DOM 工具函数
 │   ├── patches/            # 源码补丁模块
-│   │   ├── activityBar.js  # 活动栏补丁配置
+│   │   ├── activity-bar.js # 活动栏补丁配置
 │   │   └── refs/           # 源码参考与辅助脚本
 │   ├── themes/             # 12 套主题定义文件
 │   │   └── docs/           # 主题开发参考文档
@@ -130,7 +133,7 @@ pnpm run test
 
 ### 主题开发
 
-主题文件位于 [`vscode/themes/`](./vscode/themes)。执行 `更新主题配置` 时，扩展会通过 [`src/utils/theme.js`](./src/utils/theme.js) 扫描该目录下的 `.json` 文件，并自动刷新 `package.json` 中的 `contributes.themes`。
+主题文件位于 [`vscode/themes/`](./vscode/themes)。执行 `更新主题配置` 时，扩展会通过 [`src/lib/theme.js`](./src/lib/theme.js) 扫描该目录下的 `.json` 文件，并自动刷新 `package.json` 中的 `contributes.themes`。
 
 每个主题 JSON 文件通过 `name` 和 `type` 字段定义显示名称和深浅色类型，最终会生成 `Apple ${name}` 格式的标签。
 

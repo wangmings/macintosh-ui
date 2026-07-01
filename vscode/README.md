@@ -10,11 +10,12 @@ vscode/
 ├── assets/                 # 核心运行时资源：UI 注入、样式覆盖、字体配置
 │   ├── css/                # 样式文件
 │   │   ├── fonts.css       # 字体注册与全局字体栈配置
-│   │   └── index.css       # 编辑器界面样式覆盖
+│   │   └── style.css       # 编辑器界面样式覆盖
 │   ├── fonts/              # 字体资源目录
-│   └── index.js            # 浏览器端 UI 监听与修复脚本
+│   ├── fixes.js            # 浏览器端 UI 修复脚本
+│   └── utils.js            # 浏览器端 DOM 工具函数
 ├── patches/                # 源码补丁模块
-│   ├── activityBar.js      # 活动栏补丁配置
+│   ├── activity-bar.js    # 活动栏补丁配置
 │   └── refs/               # 源码参考与辅助工具
 │       ├── sync.sh         # 宿主源码同步脚本
 │       ├── sources/        # 同步下来的参考源码
@@ -44,16 +45,19 @@ vscode/
 
 这一层主要负责编辑器的基础界面注入，包括字体、全局 CSS 和浏览器端运行脚本。
 
-#### `assets/index.js`
+#### `assets/fixes.js`
 
-浏览器端 UI 监听脚本，主要作用有：
+浏览器端 UI 修复脚本，主要作用有：
 
-- 监听 DOM 变化。
+- 监听 DOM 变化，修复界面显示问题。
 - 修复 `.vscode-tokens-styles` 中语法高亮样式作用域不完整的问题，给 `.mtk` 规则补上 `.monaco-editor` 前缀。
 - 在检测到 Trae CN 环境时，自动处理特定通知弹窗，例如扩展被修改、安装损坏提示。
-- 提供 `waitNode`、`observeNode` 等辅助函数，方便后续继续扩展界面修复逻辑。
 
-#### `assets/css/index.css`
+#### `assets/utils.js`
+
+浏览器端 DOM 工具函数模块，提供 `waitNode`、`observeNode` 等辅助函数，供 `fixes.js` 及其它浏览器端脚本使用。
+
+#### `assets/css/style.css`
 
 全局样式覆盖文件，主要负责：
 
@@ -88,13 +92,13 @@ vscode/
 
 这一层负责对 VS Code / Trae CN 产物进行源码级补丁处理。
 
-#### `patches/activityBar.js`
+#### `patches/activity-bar.js`
 
 活动栏补丁配置，主要职责：
 
 - 定义 `activityBar` 补丁集合：扩展活动栏位置枚举、修复硬编码、添加 top/bottom 布局分支、调整可见项计算、扣减布局高度、SOLO 恢复活动栏显隐状态等。
 - 提供 `activityBarStyle` CSS 补丁字符串，隐藏部分 Trae CN 特有元素并调整活动栏图标样式。
-- 导出 `{ activityBar, activityBarStyle }`，供 `src/utils/patch.js` 调用。
+- 导出 `{ activityBar, activityBarStyle }`，供 `src/lib/patch.js` 调用。
 
 #### `patches/refs/sync.sh`
 
@@ -115,7 +119,7 @@ vscode/
 
 ### `themes/`
 
-主题 JSON 数据目录。每个 JSON 文件都是一个 VS Code 主题定义，由 `src/utils/theme.js` 扫描并注册到 `package.json`：
+主题 JSON 数据目录。每个 JSON 文件都是一个 VS Code 主题定义，由 `src/lib/theme.js` 扫描并注册到 `package.json`：
 
 - `dark-agola.json`：深色主题，偏 Zed Agola 风格，包含较完整的 `tokenColors` 和部分 `semanticTokenColors` 定义。
 - `dark-deep-i.json`：深色主题，偏深灰蓝风格，重点定义 UI `colors`，适合整体界面外观调整。
@@ -142,7 +146,7 @@ vscode/
 几个目录之间的关系大致如下：
 
 - `assets/` 负责运行时样式和字体注入。
-- `patches/activityBar.js` 提供补丁配置，由 `src/utils/patch.js` 读取并执行。
-- `themes/` 存储主题 JSON 数据文件，由 `src/utils/theme.js` 扫描并生成主题注册配置。
+- `patches/activity-bar.js` 提供补丁配置，由 `src/lib/patch.js` 读取并执行。
+- `themes/` 存储主题 JSON 数据文件，由 `src/lib/theme.js` 扫描并生成主题注册配置。
 - `assets/css/fonts.css` 引用 `assets/fonts/` 下的字体文件。
 - `patches/refs/sync.sh` 从目标应用同步参考源码到 `patches/refs/sources/`。

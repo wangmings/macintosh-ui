@@ -1,4 +1,4 @@
-const { activityBar, activityBarStyle } = require('../../vscode/patches/activityBar')
+const { activityBar, activityBarStyle } = require('../../vscode/patches/activity-bar')
 
 
 

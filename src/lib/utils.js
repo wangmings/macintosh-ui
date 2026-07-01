@@ -1,4 +1,3 @@
-
 const os = require('os')
 const path = require('path')
 const fs = require('fs/promises')
@@ -93,12 +92,10 @@ function regCommands(ctx, command) {
  * @returns {Promise<object>} 扩展配置对象
  */
 async function packageJSON(packFile) {
-  const pack = JSON.parse(await fs.readFile(packFile, 'utf8'))
-  const extId = `${pack.publisher}.${pack.name}`
-  const extension = vscode.extensions.getExtension(extId)
-  // 确保当前 VS Code 运行时可以找到该扩展
-  if (!extension) throw new Error(`extension not found: ${extId}`)
-  return extension.packageJSON
+  const json = JSON.parse(await fs.readFile(packFile, 'utf8'))
+  const id = `${json.publisher}.${json.name}`
+  const ext = vscode.extensions.getExtension(id)
+  return { json, package: ext.packageJSON }
 }
 
 
@@ -263,7 +260,7 @@ async function safeModifyFile(isBackup, targetFile, callback) {
   if (isBackup) {
     if (!hasBak) await fs.copyFile(targetFile, bakFile)
     const content = await fs.readFile(bakFile, 'utf8')
-    const newContent = await callback(content)
+    const newContent = await callback(content, targetFile)
     if (typeof newContent === 'string' && newContent.trim().length > 0) {
       await fs.writeFile(targetFile, newContent, 'utf8')
     }
@@ -281,14 +278,26 @@ async function safeModifyFile(isBackup, targetFile, callback) {
  * 获取当前语言
  * @returns {{language: string, locale: string}} 当前语言，'zh' 或 'en'
  */
-function getLocale() {
+function locales() {
   const language = vscode.env.language
   return {language, locale: language.split('-')[0]}
 }
 
 
 
-
+/**
+ * 计算相对路径
+ * @param {string} base - 基础路径
+ * @param {string} file - 目标文件
+ * @returns {string} 相对路径
+ */
+function relativePath(base, file) {
+  const a = base.replace(/\/$/, '').split('/')
+  const b = file.replace(/\/[^/]*$/, '').split('/')
+  let i = 0; while (a[i] === b[i]) i++
+  const up = '../'.repeat(b.length - i), down = a.slice(i).join('/')
+  return (up + down) || './'
+}
 
 
 
@@ -297,16 +306,17 @@ function getLocale() {
 module.exports = {
   rm,
   exists,
+  locales,
   symlink,
   getPaths,
   copyDirs,
   execShell,
-  getLocale,
   showMessage,
   regCommands,
   execCommand,
   packageJSON,
   addWorkspace,
+  relativePath,
   restartApp,
   listFiles,
   getVSFonts,

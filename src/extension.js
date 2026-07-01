@@ -1,16 +1,16 @@
 
 const path = require('path')
-const utils = require('./utils')
-const i18n = require('./utils/i18n')
-const patch = require('./utils/patch')
-const theme = require('./utils/theme')
+const i18n = require('./lib/i18n')
+const utils = require('./lib/utils')
+const patch = require('./lib/patch')
+const theme = require('./lib/theme')
 
 // 插件初始化状态
 let initStatus = false
 
-// 获取当前语言的消息对象
-const { locale } = utils.getLocale()
-const { messages, translate: tr } = i18n.loadLocale(locale)
+// 获取当前语言的翻译对象
+const { locale } = utils.locales()
+const {messages, translate: tr } = i18n.loadLocale(locale)
 
 
 
@@ -20,7 +20,8 @@ const app = {
   execFile: 'bin/code',
   inject: {
     dir: 'out/vscode',
-    mainFile: 'out/main.js',
+    main: 'out/main.js',
+    files: ['fonts.css', 'style.css', 'utils.js', 'fixes.js'],
     sessionsHtml: 'out/vs/sessions/electron-browser/sessions.html',
     workbenchHtml: 'out/vs/code/electron-browser/workbench/workbench.html'
   },
@@ -39,7 +40,7 @@ const app = {
 
 // 插件配置对象
 const ext = {
-  backupDir: 'Macintosh-UI-Backup',
+  backupDir: 'macintosh-ui-bak',
   vscodeDir: 'vscode',
   assetsDir: 'vscode/assets',
   themesDir: 'vscode/themes',
@@ -62,17 +63,22 @@ async function initPlugin(ctx) {
   const isTrae = appRoot.includes('Trae')
   
   // 初始化插件路径
-  ext.backupDir = path.join(homeDir, ext.backupDir)
   ext.vscodeDir = path.join(extRoot, ext.vscodeDir)
   ext.assetsDir = path.join(extRoot, ext.assetsDir)
   ext.themesDir = path.join(extRoot, ext.themesDir)
   ext.packageFile = path.join(extRoot, ext.packageFile)
   
+  // 初始化备份目录
+  const { json } = await utils.packageJSON(ext.packageFile)
+  ext.backupDir = path.join(homeDir, `${ext.backupDir}-${json.version}`)
+  
+  
+  
   // 初始化应用路径
   app.name = isTrae ? 'trae' : 'vscode'
   app.execFile = path.join(appRoot, app.execFile)
   app.inject.dir = path.join(appRoot, app.inject.dir)
-  app.inject.mainFile = path.join(appRoot, app.inject.mainFile)
+  app.inject.main = path.join(appRoot, app.inject.main)
   app.inject.sessionsHtml = path.join(appRoot, app.inject.sessionsHtml)
   app.inject.workbenchHtml = path.join(appRoot, app.inject.workbenchHtml)
   app.desktop.sessions.root = path.join(appRoot, app.desktop.sessions.root)
@@ -125,18 +131,18 @@ async function addApplyPatches(isAdd) {
   for (const file of workbench.files) {
     const ext = path.extname(file)
     const filePath = path.join(workbench.root, file)
-    await utils.safeModifyFile(isAdd, filePath, async (text) => {
+    await utils.safeModifyFile(isAdd, filePath, async (content) => {
       if (app.name == 'trae') {
-        const { data, status } = patch.traeActivityBar(ext, text)
+        const { data, status } = patch.traeActivityBar(ext, content)
         if (status.fail.length > 0) {
           console.warn(tr('message.activityBar', { err: status }))
           utils.showMessage(tr('patch.activityBar'))
         } else {
-          text = data
+          content = data
         }
       }
-      if (isSetting) text = text.replaceAll(fonts.default, fonts.setting)
-      return text
+      if (isSetting) content = content.replaceAll(fonts.default, fonts.setting)
+      return content
     })
   }
 
@@ -150,40 +156,34 @@ async function addApplyPatches(isAdd) {
 /**
  * 注入 HTML 代码
  * @param {string} type - 代码文件类型（'sessions' 或 'workbench'）
- * @param {string} text - HTML 文本内容
+ * @param {string} content - HTML 文本内容
  * @returns {Promise<string | null>} - 注入后的 HTML 文本内容
  */
-async function injectHtml(type, text) {
+async function injectHtml(type, content, targetFile) {
   let injected = []
-  const injectDir = app.inject.dir
-  const dirs = path.basename(injectDir)
+  const relatPath = utils.relativePath(app.inject.dir, targetFile)
   const injectTag = {
-    '.js': '<script async src="{url}"></script>',
-    '.css': '<link async rel="stylesheet" href="{url}">',
+    '.js': `<script async src="${relatPath}/$file"></script>`,
+    '.css': `<link async rel="stylesheet" href="${relatPath}/css/$file">`,
   }
 
+  // 注入会话字体文件
   if (type === 'sessions') {
-    const url = `../../../${dirs}/css/fonts.css`
-    const tag = injectTag['.css'].replace('{url}', url)
+    const tag = injectTag['.css'].replace('$file', 'fonts.css') 
     injected.push(tag)
   }
-  
+
+  // 注入工作台代码文件
   if (type === 'workbench') {
-    const files = await utils.listFiles(injectDir)
-    for (const file of files) {
-      const ext = path.extname(file)
-      const tag = injectTag[ext]
-      if (tag) {
-        const url = `../../../../${dirs}/${file}`
-        injected.push(tag.replace('{url}', url))
-      }
+    for (const file of app.inject.files) {
+      const tag = injectTag[path.extname(file)]
+      injected.push(tag.replace('$file', file))
     }
   }
 
-  const title = ['', '<!-- Injected by Macintosh UI -->']
-  injected.unshift(...title)
-  injected = injected.join('\n\t\t') + '\n\t</head>'
-  return text.replaceAll('</head>', injected)
+  injected = ['', '<!-- Injected by Macintosh UI -->', ...injected]
+  const code = injected.join('\n\t\t') + '\n\t</head>'
+  return content.replaceAll('</head>', code)
 
 }
 
@@ -207,8 +207,8 @@ async function applyThemeConfig(isAdd) {
   await utils.rm(injectDir)
 
   if (isAdd) {
-    // 更新主题配置
-    await theme.updateThemes(ext.themesDir, ext.packageFile)
+    // 同步主题配置
+    await theme.syncThemes(ext.themesDir, ext.packageFile)
     // 创建软链接
     await utils.symlink(ext.assetsDir, injectDir)
   }
@@ -220,8 +220,8 @@ async function applyThemeConfig(isAdd) {
 
   // 会话字体配置
   if (app.name == 'vscode') {
-    await utils.safeModifyFile(isAdd, sessionsHtml, async (text) => {
-      return await injectHtml('sessions', text)
+    await utils.safeModifyFile(isAdd, sessionsHtml, async (content, targetFile) => {
+      return await injectHtml('sessions', content, targetFile)
     })
   }
 
@@ -229,8 +229,8 @@ async function applyThemeConfig(isAdd) {
 
   
   // 应用注入的代码文件
-  await utils.safeModifyFile(isAdd, workbenchHtml, async (text) => {
-    return await injectHtml('workbench', text)
+  await utils.safeModifyFile(isAdd, workbenchHtml, async (content, targetFile) => {
+    return await injectHtml('workbench', content, targetFile)
   })
 
 
